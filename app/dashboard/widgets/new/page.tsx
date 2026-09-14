@@ -1,9 +1,10 @@
+import { Suspense } from "react";
 import NewWidget from "@/components/dashboard/widgets/new/Main";
 
 export default function DashboardWidgetsAddPage() {
     return (
-        <div>
+        <Suspense fallback={null}>
             <NewWidget />
-        </div>
-    )
+        </Suspense>
+    );
 }
