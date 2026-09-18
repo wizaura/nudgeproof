@@ -52,38 +52,48 @@ export default function Home() {
           src="/nudge_proof.avif"
           alt=""
           className="
-            absolute
-            left-0
-            lg:-top-36
-            bottom-0
-
-            block
-            w-full
-            h-auto
-            max-w-none
-
-            mix-blend-screen
-          "
+      absolute
+      left-0
+      lg:-top-36
+      bottom-0
+      block
+      w-full
+      h-auto
+      max-w-none
+      mix-blend-screen
+      animate-landscape-rise
+    "
         />
 
-        {/* Soft white fade where landscape meets hero */}
-
+        {/* White atmospheric fade */}
         <div
           className="
-            absolute
-            left-0
-            right-0
-            top-2
-            h-[22%]
-
-            bg-gradient-to-b
-            from-white
-            via-white/75
-            to-transparent
-          "
+      absolute
+      inset-x-0
+      top-0
+      h-[45%]
+      bg-gradient-to-b
+      from-white
+      via-white/90
+      via-[55%]
+      to-transparent
+    "
         />
 
-      </div>
+        {/* Soft white cloud texture */}
+        <div
+          className="
+      absolute
+      inset-x-0
+      top-[8%]
+      h-[35%]
+      opacity-80
+      bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.95)_0%,rgba(255,255,255,0.7)_35%,rgba(255,255,255,0)_72%)]
+      blur-[10px]
+    "
+        />
+
+      </div>  
 
 
       {/* =====================================================
