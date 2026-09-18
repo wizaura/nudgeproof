@@ -846,6 +846,27 @@ function AppearanceEditor({
         value: any
     ) => void;
 }) {
+    const position = config.position ?? "bottom-left";
+
+    const positions = [
+        {
+            value: "top-left",
+            label: "Top left",
+        },
+        {
+            value: "top-right",
+            label: "Top right",
+        },
+        {
+            value: "bottom-left",
+            label: "Bottom left",
+        },
+        {
+            value: "bottom-right",
+            label: "Bottom right",
+        },
+    ];
+
     return (
         <section className="rounded-xl border bg-card">
             <div className="border-b px-6 py-5">
@@ -854,49 +875,100 @@ function AppearanceEditor({
                 </h2>
 
                 <p className="mt-1 text-sm text-muted-foreground">
-                    Choose where the widget appears.
+                    Customize how your notification appears on the website.
                 </p>
             </div>
 
-            <div className="p-6">
-                <div className="space-y-2">
-                    <label
-                        htmlFor="position"
-                        className="text-sm font-medium"
-                    >
+            <div className="space-y-6 p-6">
+                <div className="space-y-3">
+                    <label className="text-sm font-medium">
                         Position
                     </label>
 
-                    <select
-                        id="position"
+                    <div className="grid grid-cols-2 gap-3">
+                        {positions.map((item) => {
+                            const active =
+                                position === item.value;
+
+                            return (
+                                <button
+                                    key={item.value}
+                                    type="button"
+                                    onClick={() =>
+                                        updateConfig(
+                                            "position",
+                                            item.value
+                                        )
+                                    }
+                                    className={`relative h-24 overflow-hidden rounded-xl border-2 transition ${
+                                        active
+                                            ? "border-blue-500 bg-blue-50"
+                                            : "border-border bg-muted/30 hover:border-muted-foreground/40"
+                                    }`}
+                                >
+                                    <div className="absolute inset-2 rounded-lg border bg-background">
+                                        <div
+                                            className={`absolute h-5 w-12 rounded-md ${
+                                                item.value.includes(
+                                                    "top"
+                                                )
+                                                    ? "top-2"
+                                                    : "bottom-2"
+                                            } ${
+                                                item.value.includes(
+                                                    "left"
+                                                )
+                                                    ? "left-2"
+                                                    : "right-2"
+                                            } ${
+                                                active
+                                                    ? "bg-blue-500"
+                                                    : "bg-slate-300"
+                                            }`}
+                                        />
+                                    </div>
+
+                                    <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[11px] font-medium text-muted-foreground">
+                                        {item.label}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                    <NumberInput
+                        label="Width"
                         value={
-                            config.position ??
-                            "bottom-left"
+                            config.appearance?.width ?? 340
                         }
-                        onChange={(event) =>
-                            updateConfig(
-                                "position",
-                                event.target.value
-                            )
+                        min={280}
+                        max={500}
+                        suffix="px"
+                        onChange={(value) =>
+                            updateConfig("appearance", {
+                                ...(config.appearance ?? {}),
+                                width: value,
+                            })
                         }
-                        className="h-11 w-full rounded-lg border bg-background px-3 text-sm outline-none focus:border-foreground focus:ring-1 focus:ring-foreground"
-                    >
-                        <option value="bottom-left">
-                            Bottom left
-                        </option>
+                    />
 
-                        <option value="bottom-right">
-                            Bottom right
-                        </option>
-
-                        <option value="top-left">
-                            Top left
-                        </option>
-
-                        <option value="top-right">
-                            Top right
-                        </option>
-                    </select>
+                    <NumberInput
+                        label="Corner radius"
+                        value={
+                            config.appearance?.radius ?? 16
+                        }
+                        min={0}
+                        max={32}
+                        suffix="px"
+                        onChange={(value) =>
+                            updateConfig("appearance", {
+                                ...(config.appearance ?? {}),
+                                radius: value,
+                            })
+                        }
+                    />
                 </div>
             </div>
         </section>

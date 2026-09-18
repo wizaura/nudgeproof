@@ -22,6 +22,18 @@ type WidgetConfig = {
 
     cta_text?: string;
     cta_url?: string;
+
+    appearance?: {
+        width?: number;
+        radius?: number;
+        background?: string;
+        textColor?: string;
+        secondaryColor?: string;
+        accentColor?: string;
+        shadow?: string;
+        fontSize?: number;
+        closeButton?: boolean;
+    };
 };
 
 type WidgetPreviewProps = {
@@ -38,11 +50,9 @@ export default function WidgetPreview({
     useEffect(() => {
         setVisible(false);
 
-        const delay = config.delay ?? 0;
-
         const timer = window.setTimeout(() => {
             setVisible(true);
-        }, Math.min(delay, 1500));
+        }, Math.min(config.delay ?? 0, 1500));
 
         return () => window.clearTimeout(timer);
     }, [type, config]);
@@ -50,49 +60,25 @@ export default function WidgetPreview({
     const position = config.position ?? "bottom-left";
 
     const positionClasses: Record<string, string> = {
-        "bottom-left": "bottom-6 left-6",
-        "bottom-right": "bottom-6 right-6",
-        "top-left": "top-6 left-6",
-        "top-right": "top-6 right-6",
+        "bottom-left": "bottom-5 left-5",
+        "bottom-right": "bottom-5 right-5",
+        "top-left": "top-5 left-5",
+        "top-right": "top-5 right-5",
     };
 
     const currentPosition =
         positionClasses[position] ?? positionClasses["bottom-left"];
 
     return (
-        <div className="relative h-[420px] w-full overflow-hidden rounded-xl border bg-muted/30">
-            {/* Fake website background */}
-            <div className="absolute inset-0">
-                <div className="border-b bg-background px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="h-6 w-28 rounded bg-muted" />
+        <div className="relative h-[460px] w-full overflow-hidden rounded-2xl border bg-slate-100 shadow-sm">
+            <FakeWebsite />
 
-                        <div className="flex gap-4">
-                            <div className="h-3 w-12 rounded bg-muted" />
-                            <div className="h-3 w-12 rounded bg-muted" />
-                            <div className="h-3 w-12 rounded bg-muted" />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mx-auto max-w-3xl px-8 py-12">
-                    <div className="mx-auto mb-8 h-8 w-64 rounded bg-muted" />
-
-                    <div className="mx-auto mb-3 h-4 w-full max-w-xl rounded bg-muted" />
-                    <div className="mx-auto mb-3 h-4 w-full max-w-lg rounded bg-muted" />
-
-                    <div className="mx-auto mt-8 h-40 w-full max-w-2xl rounded-xl bg-muted/70" />
-                </div>
-            </div>
-
-            {/* Preview label */}
-            <div className="absolute left-1/2 top-4 z-20 -translate-x-1/2 rounded-full border bg-background px-3 py-1 text-xs text-muted-foreground shadow-sm">
+            <div className="absolute left-1/2 top-4 z-30 -translate-x-1/2 rounded-full border bg-white/90 px-3 py-1 text-[11px] font-medium text-slate-500 shadow-sm backdrop-blur">
                 Live Preview
             </div>
 
-            {/* Notification */}
             <div
-                className={`absolute z-10 transition-all duration-500 ${currentPosition} ${
+                className={`absolute z-20 transition-all duration-500 ${currentPosition} ${
                     visible
                         ? "translate-y-0 opacity-100"
                         : "translate-y-3 opacity-0"
@@ -102,6 +88,40 @@ export default function WidgetPreview({
                     type={type}
                     config={config}
                 />
+            </div>
+        </div>
+    );
+}
+
+function FakeWebsite() {
+    return (
+        <div className="absolute inset-0 bg-white">
+            <div className="border-b bg-white px-6 py-4">
+                <div className="flex items-center justify-between">
+                    <div className="h-6 w-28 rounded-md bg-slate-200" />
+
+                    <div className="hidden items-center gap-5 sm:flex">
+                        <div className="h-2.5 w-12 rounded bg-slate-200" />
+                        <div className="h-2.5 w-12 rounded bg-slate-200" />
+                        <div className="h-2.5 w-12 rounded bg-slate-200" />
+                    </div>
+                </div>
+            </div>
+
+            <div className="mx-auto max-w-3xl px-8 py-14">
+                <div className="mx-auto mb-8 h-8 w-64 rounded-lg bg-slate-200" />
+
+                <div className="mx-auto mb-3 h-3 w-full max-w-xl rounded bg-slate-200" />
+                <div className="mx-auto mb-3 h-3 w-full max-w-lg rounded bg-slate-200" />
+                <div className="mx-auto h-3 w-full max-w-md rounded bg-slate-200" />
+
+                <div className="mx-auto mt-10 h-40 w-full max-w-2xl rounded-2xl bg-slate-100" />
+
+                <div className="mt-8 grid grid-cols-3 gap-4">
+                    <div className="h-20 rounded-xl bg-slate-100" />
+                    <div className="h-20 rounded-xl bg-slate-100" />
+                    <div className="h-20 rounded-xl bg-slate-100" />
+                </div>
             </div>
         </div>
     );
@@ -134,12 +154,43 @@ function Notification({
 
 function NotificationContainer({
     children,
+    config,
 }: {
     children: React.ReactNode;
+    config: WidgetConfig;
 }) {
+    const appearance = config.appearance ?? {};
+
+    const width = appearance.width ?? 340;
+    const radius = appearance.radius ?? 16;
+    const background = appearance.background ?? "#ffffff";
+    const textColor = appearance.textColor ?? "#111827";
+    const secondaryColor =
+        appearance.secondaryColor ?? "#6b7280";
+    const shadow =
+        appearance.shadow ??
+        "0 20px 40px rgba(15, 23, 42, 0.16)";
+
     return (
-        <div className="w-[340px] max-w-[calc(100vw-3rem)] rounded-xl border bg-background p-4 shadow-xl">
-            {children}
+        <div
+            className="border"
+            style={{
+                width,
+                maxWidth: "calc(100vw - 40px)",
+                borderRadius: radius,
+                background,
+                color: textColor,
+                boxShadow: shadow,
+            }}
+        >
+            <div
+                className="p-4"
+                style={{
+                    color: textColor,
+                }}
+            >
+                {children}
+            </div>
         </div>
     );
 }
@@ -152,16 +203,17 @@ function RecentSales({
     const title = config.title || "Recent purchase";
 
     const message =
-        config.message || "{name} purchased {product}";
+        config.message ||
+        "{name} purchased {product}";
 
     const renderedMessage = message
         .replace("{name}", "John")
         .replace("{product}", "Premium Package");
 
     return (
-        <NotificationContainer>
+        <NotificationContainer config={config}>
             <div className="flex gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold">
                     J
                 </div>
 
@@ -170,11 +222,11 @@ function RecentSales({
                         {title}
                     </p>
 
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-1 text-sm text-slate-500">
                         {renderedMessage}
                     </p>
 
-                    <p className="mt-2 text-xs text-muted-foreground">
+                    <p className="mt-2 text-[11px] text-slate-400">
                         Just now
                     </p>
                 </div>
@@ -198,10 +250,10 @@ function LiveVisitors({
     );
 
     return (
-        <NotificationContainer>
+        <NotificationContainer config={config}>
             <div className="flex items-center gap-3">
-                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
-                    <span className="h-3 w-3 rounded-full bg-green-500" />
+                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100">
+                    <span className="h-3 w-3 rounded-full bg-emerald-500" />
                 </div>
 
                 <div>
@@ -209,7 +261,7 @@ function LiveVisitors({
                         {renderedMessage}
                     </p>
 
-                    <p className="mt-1 text-xs text-muted-foreground">
+                    <p className="mt-1 text-[11px] text-slate-400">
                         Live activity
                     </p>
                 </div>
@@ -224,16 +276,20 @@ function Review({
     config: WidgetConfig;
 }) {
     const reviewer = config.reviewer || "Sarah";
-    const rating = Math.min(Math.max(config.rating ?? 5, 1), 5);
+
+    const rating = Math.min(
+        Math.max(config.rating ?? 5, 1),
+        5
+    );
 
     const text =
         config.text ||
         "Amazing experience. I would definitely recommend this!";
 
     return (
-        <NotificationContainer>
+        <NotificationContainer config={config}>
             <div className="flex gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold">
                     {reviewer.charAt(0).toUpperCase()}
                 </div>
 
@@ -244,22 +300,24 @@ function Review({
                         </p>
 
                         <div className="flex gap-0.5 text-sm">
-                            {Array.from({ length: 5 }).map((_, index) => (
-                                <span
-                                    key={index}
-                                    className={
-                                        index < rating
-                                            ? "text-yellow-500"
-                                            : "text-muted-foreground/30"
-                                    }
-                                >
-                                    ★
-                                </span>
-                            ))}
+                            {Array.from({ length: 5 }).map(
+                                (_, index) => (
+                                    <span
+                                        key={index}
+                                        className={
+                                            index < rating
+                                                ? "text-amber-400"
+                                                : "text-slate-200"
+                                        }
+                                    >
+                                        ★
+                                    </span>
+                                )
+                            )}
                         </div>
                     </div>
 
-                    <p className="mt-2 text-sm leading-5 text-muted-foreground">
+                    <p className="mt-2 text-sm leading-5 text-slate-500">
                         {text}
                     </p>
                 </div>
@@ -280,20 +338,20 @@ function Announcement({
         "We have something exciting to share with you.";
 
     return (
-        <NotificationContainer>
+        <NotificationContainer config={config}>
             <div>
                 <p className="text-sm font-semibold">
                     {title}
                 </p>
 
-                <p className="mt-1 text-sm leading-5 text-muted-foreground">
+                <p className="mt-1 text-sm leading-5 text-slate-500">
                     {message}
                 </p>
 
                 {config.cta_text && (
                     <button
                         type="button"
-                        className="mt-3 inline-flex rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground"
+                        className="mt-3 inline-flex rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white"
                     >
                         {config.cta_text}
                     </button>

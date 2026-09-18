@@ -4,11 +4,7 @@ import Link from "next/link";
 import {
     ArrowLeft,
     Globe,
-    Pause,
-    Play,
 } from "lucide-react";
-import WidgetEditor from "./widget-editor";
-import WidgetPreview from "./widget-preview";
 import WidgetWorkspace from "./widget-workspace";
 
 type Props = {

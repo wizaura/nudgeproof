@@ -250,6 +250,72 @@
   }
 }
 
+.np-recent-sale {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.np-avatar {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #007fff;
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.np-content {
+    min-width: 0;
+}
+
+.np-title {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    color: #141414;
+}
+
+.np-message {
+    margin-top: 2px;
+
+    font-size: 13px;
+    line-height: 18px;
+
+    color: #444444;
+}
+
+.np-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    margin-top: 5px;
+
+    font-size: 10px;
+    line-height: 14px;
+
+    color: #888888;
+}
+
+.np-live-dot {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #007fff;
+}
+
 /* =========================================================
    Reusable NudgeProof Utilities
    ========================================================= */

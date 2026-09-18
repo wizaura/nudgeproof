@@ -1,55 +1,24 @@
 (function () {
     "use strict";
 
-    /*
-     * NudgeProof Embed v1
-     *
-     * Installation:
-     *
-     * <script
-     *     src="https://YOUR_DOMAIN.com/embed/v1.js"
-     *     data-site-key="site_xxxxx"
-     *     async
-     * ></script>
-     */
-
-    var SCRIPT_VERSION = "1.0.0";
+    var SCRIPT_VERSION = "2.2.0";
 
     var script =
         document.currentScript ||
         document.querySelector(
-            'script[data-site-key]'
+            'script[data-site], script[data-site-key]'
         );
 
-    if (!script) {
-        return;
-    }
+    if (!script) return;
 
     var siteKey =
+        script.getAttribute("data-site") ||
         script.getAttribute("data-site-key");
 
-    if (!siteKey) {
-        return;
-    }
-
-    /*
-     * Prevent the script from being initialized twice.
-     */
-    if (window.__NUDGEPROOF_LOADED__) {
-        return;
-    }
+    if (!siteKey || window.__NUDGEPROOF_LOADED__) return;
 
     window.__NUDGEPROOF_LOADED__ = true;
 
-    /*
-     * The API origin is derived from the script URL.
-     *
-     * This means the same v1.js can work in:
-     *
-     * localhost
-     * staging
-     * production
-     */
     var scriptUrl;
 
     try {
@@ -68,27 +37,103 @@
         "/api/embed/" +
         encodeURIComponent(siteKey);
 
+    var VISITORS_API_URL =
+        API_URL +
+        "/visitors";
+
+    var QUEUE_POSITIONS = [
+        "top",
+        "bottom"
+    ];
+
+    var VISUAL_POSITIONS = [
+        "top-left",
+        "top-right",
+        "bottom-left",
+        "bottom-right"
+    ];
+
+    var MAX_QUEUE_SIZE = 5;
+    var POLL_INTERVAL = 15000;
+    var VISITOR_HEARTBEAT_INTERVAL = 30000;
+
     /*
-     * ------------------------------------------------------------------------
-     * State
-     * ------------------------------------------------------------------------
+     * Live Visitors:
+     *
+     * The popup is displayed only for its configured
+     * duration. After it has been displayed, the same
+     * live visitor widget cannot display again for 60s.
      */
+    var LIVE_VISITOR_COOLDOWN = 60000;
 
     var state = {
         site: null,
         widgets: [],
         events: [],
+        liveVisitors: null,
+
         root: null,
         shadow: null,
+
+        initialized: false,
+
         activeTimers: [],
-        initialized: false
+
+        pollTimer: null,
+        visitorPollTimer: null,
+        visitorHeartbeatTimer: null,
+
+        shownEventIds: {},
+        shownAnnouncementIds: {},
+        shownFallbackReviewIds: {},
+
+        lastLiveShown: {},
+        liveCooldownTimers: {},
+
+        positionQueues: {
+            top: [],
+            bottom: []
+        },
+
+        activePositions: {
+            top: null,
+            bottom: null
+        },
+
+        queueWaiting: {
+            top: false,
+            bottom: false
+        },
+
+        queueTimers: {
+            top: null,
+            bottom: null
+        }
     };
 
-    /*
-     * ------------------------------------------------------------------------
-     * Utilities
-     * ------------------------------------------------------------------------
-     */
+    function getPosition(position) {
+        if (
+            VISUAL_POSITIONS.indexOf(position) !== -1
+        ) {
+            return position;
+        }
+
+        return "bottom-left";
+    }
+
+    function getQueuePosition(position) {
+        var visualPosition =
+            getPosition(position);
+
+        if (
+            visualPosition === "top-left" ||
+            visualPosition === "top-right"
+        ) {
+            return "top";
+        }
+
+        return "bottom";
+    }
 
     function safeNumber(
         value,
@@ -154,8 +199,117 @@
                 ),
                 "g"
             ),
-            value
+            String(value)
         );
+    }
+
+    function getInitial(value) {
+        var text =
+            String(value || "").trim();
+
+        if (!text) {
+            return "•";
+        }
+
+        return text
+            .charAt(0)
+            .toUpperCase();
+    }
+
+    function formatRelativeTime(
+        dateValue
+    ) {
+        if (!dateValue) {
+            return "Just now";
+        }
+
+        var timestamp =
+            new Date(dateValue).getTime();
+
+        if (!Number.isFinite(timestamp)) {
+            return "Just now";
+        }
+
+        var seconds = Math.max(
+            0,
+            Math.floor(
+                (Date.now() - timestamp) /
+                    1000
+            )
+        );
+
+        if (seconds < 60) {
+            return "Just now";
+        }
+
+        var minutes =
+            Math.floor(seconds / 60);
+
+        if (minutes < 60) {
+            return (
+                minutes +
+                (
+                    minutes === 1
+                        ? " minute ago"
+                        : " minutes ago"
+                )
+            );
+        }
+
+        var hours =
+            Math.floor(minutes / 60);
+
+        if (hours < 24) {
+            return (
+                hours +
+                (
+                    hours === 1
+                        ? " hour ago"
+                        : " hours ago"
+                )
+            );
+        }
+
+        var days =
+            Math.floor(hours / 24);
+
+        return (
+            days +
+            (
+                days === 1
+                    ? " day ago"
+                    : " days ago"
+            )
+        );
+    }
+
+    function addTimer(
+        callback,
+        delay
+    ) {
+        var timer =
+            window.setTimeout(
+                function () {
+                    var index =
+                        state.activeTimers.indexOf(
+                            timer
+                        );
+
+                    if (index !== -1) {
+                        state.activeTimers.splice(
+                            index,
+                            1
+                        );
+                    }
+
+                    callback();
+                },
+                delay
+            );
+
+        state.activeTimers.push(timer);
+
+        return timer;
     }
 
     function clearTimers() {
@@ -166,64 +320,72 @@
         );
 
         state.activeTimers = [];
+
+        QUEUE_POSITIONS.forEach(
+            function (position) {
+                if (
+                    state.queueTimers[position]
+                ) {
+                    window.clearTimeout(
+                        state.queueTimers[position]
+                    );
+
+                    state.queueTimers[position] =
+                        null;
+                }
+
+                state.queueWaiting[position] =
+                    false;
+            }
+        );
+
+        Object.keys(
+            state.liveCooldownTimers
+        ).forEach(
+            function (widgetId) {
+                window.clearTimeout(
+                    state.liveCooldownTimers[
+                        widgetId
+                    ]
+                );
+            }
+        );
+
+        state.liveCooldownTimers = {};
     }
 
-    /*
-     * ------------------------------------------------------------------------
-     * Position
-     * ------------------------------------------------------------------------
-     */
+    function clearPollTimer() {
+        if (state.pollTimer) {
+            window.clearTimeout(
+                state.pollTimer
+            );
 
-    function getPositionStyle(
-        position
-    ) {
-        var gap = "20px";
-
-        switch (position) {
-            case "bottom-right":
-                return (
-                    "bottom:" +
-                    gap +
-                    ";right:" +
-                    gap +
-                    ";"
-                );
-
-            case "top-left":
-                return (
-                    "top:" +
-                    gap +
-                    ";left:" +
-                    gap +
-                    ";"
-                );
-
-            case "top-right":
-                return (
-                    "top:" +
-                    gap +
-                    ";right:" +
-                    gap +
-                    ";"
-                );
-
-            case "bottom-left":
-            default:
-                return (
-                    "bottom:" +
-                    gap +
-                    ";left:" +
-                    gap +
-                    ";"
-                );
+            state.pollTimer = null;
         }
     }
 
-    /*
-     * ------------------------------------------------------------------------
-     * Root
-     * ------------------------------------------------------------------------
-     */
+    function clearVisitorPolling() {
+        if (state.visitorPollTimer) {
+            window.clearTimeout(
+                state.visitorPollTimer
+            );
+
+            state.visitorPollTimer = null;
+        }
+    }
+
+    function clearVisitorHeartbeat() {
+        if (
+            state.visitorHeartbeatTimer
+        ) {
+            window.clearInterval(
+                state.visitorHeartbeatTimer
+            );
+
+            state.visitorHeartbeatTimer =
+                null;
+        }
+    }
 
     function createRoot() {
         if (state.root) {
@@ -231,26 +393,20 @@
         }
 
         var root =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
         root.setAttribute(
             "data-nudgeproof-root",
             "true"
         );
 
-        root.style.position =
-            "fixed";
-
+        root.style.position = "fixed";
         root.style.left = "0";
         root.style.top = "0";
         root.style.width = "0";
         root.style.height = "0";
-
         root.style.zIndex =
             "2147483647";
-
         root.style.pointerEvents =
             "none";
 
@@ -258,10 +414,6 @@
 
         state.root = root;
 
-        /*
-         * Shadow DOM isolates NudgeProof styles
-         * from the customer's website.
-         */
         if (root.attachShadow) {
             state.shadow =
                 root.attachShadow({
@@ -274,17 +426,9 @@
         injectStyles();
     }
 
-    /*
-     * ------------------------------------------------------------------------
-     * Styles
-     * ------------------------------------------------------------------------
-     */
-
     function injectStyles() {
         var style =
-            document.createElement(
-                "style"
-            );
+            document.createElement("style");
 
         style.textContent = `
             :host {
@@ -297,50 +441,15 @@
                 box-sizing: border-box;
             }
 
-            .np-container {
-                position: fixed;
-                width: 0;
-                height: 0;
-                pointer-events: none;
-                z-index: 2147483647;
-            }
-
-            .np-container.np-bottom-left {
-                left: 0;
-                bottom: 0;
-            }
-
-            .np-container.np-bottom-right {
-                right: 0;
-                bottom: 0;
-            }
-
-            .np-container.np-top-left {
-                left: 0;
-                top: 0;
-            }
-
-            .np-container.np-top-right {
-                right: 0;
-                top: 0;
-            }
-
             .np-notification {
                 position: fixed;
-                width: 340px;
+                width: 350px;
                 max-width: calc(100vw - 32px);
-
-                padding: 16px;
-
-                border: 1px solid
-                    rgba(0, 0, 0, 0.10);
-
-                border-radius: 14px;
-
+                padding: 15px 16px;
+                border: 1px solid rgba(20, 20, 20, 0.09);
+                border-radius: 16px;
                 background: #ffffff;
-
-                color: #111111;
-
+                color: #141414;
                 font-family:
                     -apple-system,
                     BlinkMacSystemFont,
@@ -349,25 +458,18 @@
                     Helvetica,
                     Arial,
                     sans-serif;
-
                 box-shadow:
-                    0 12px 40px
-                    rgba(0, 0, 0, 0.14);
-
+                    0 18px 55px rgba(20, 20, 20, 0.16),
+                    0 2px 8px rgba(20, 20, 20, 0.06);
                 pointer-events: auto;
-
                 opacity: 0;
-
                 transform:
                     translateY(12px)
-                    scale(0.98);
-
+                    scale(0.985);
                 transition:
                     opacity 220ms ease,
                     transform 220ms ease;
-
                 line-height: 1.4;
-
                 overflow: hidden;
             }
 
@@ -400,28 +502,23 @@
 
             .np-content {
                 display: flex;
-                gap: 12px;
                 align-items: flex-start;
+                gap: 12px;
             }
 
             .np-avatar {
-                flex: 0 0 auto;
-
                 width: 42px;
                 height: 42px;
-
+                flex: 0 0 42px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-
                 border-radius: 50%;
-
-                background: #f1f1f1;
-
-                color: #555555;
-
+                background: #007fff;
+                color: #ffffff;
                 font-size: 14px;
-                font-weight: 600;
+                font-weight: 700;
+                line-height: 1;
             }
 
             .np-body {
@@ -431,73 +528,72 @@
 
             .np-title {
                 margin: 0;
-
-                color: #111111;
-
+                color: #141414;
                 font-size: 14px;
-                font-weight: 600;
-
+                font-weight: 650;
                 line-height: 1.35;
             }
 
             .np-message {
                 margin: 4px 0 0;
-
                 color: #555555;
-
                 font-size: 13px;
-
                 line-height: 1.5;
             }
 
             .np-meta {
+                display: flex;
+                align-items: center;
+                gap: 6px;
                 margin-top: 7px;
-
-                color: #888888;
-
+                color: #8a8a8a;
                 font-size: 11px;
+                line-height: 1.3;
             }
 
-            .np-live-dot {
-                position: relative;
+            .np-dot {
+                width: 6px;
+                height: 6px;
+                flex: 0 0 6px;
+                border-radius: 50%;
+                background: #007fff;
+                box-shadow:
+                    0 0 0 4px
+                    rgba(0, 127, 255, 0.10);
+            }
 
-                flex: 0 0 auto;
-
+            .np-live-icon {
                 width: 42px;
                 height: 42px;
-
+                flex: 0 0 42px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-
                 border-radius: 50%;
-
-                background: #f4f4f4;
+                background:
+                    rgba(0, 127, 255, 0.08);
+                color: #007fff;
             }
 
-            .np-live-dot::after {
+            .np-live-icon::after {
                 content: "";
-
                 width: 11px;
                 height: 11px;
-
                 border-radius: 50%;
-
-                background: #22c55e;
-
+                background: #007fff;
                 box-shadow:
                     0 0 0 4px
-                    rgba(34, 197, 94, 0.12);
+                    rgba(0, 127, 255, 0.12);
             }
 
             .np-stars {
                 display: flex;
                 gap: 2px;
-                margin-top: 4px;
+                margin-top: 5px;
             }
 
             .np-star {
-                font-size: 13px;
+                font-size: 14px;
                 line-height: 1;
             }
 
@@ -506,25 +602,20 @@
             }
 
             .np-star-inactive {
-                color: #d4d4d4;
+                color: #d6d6d6;
             }
 
             .np-reviewer {
                 margin: 0;
-
-                color: #111111;
-
+                color: #141414;
                 font-size: 14px;
-                font-weight: 600;
+                font-weight: 650;
             }
 
             .np-review-text {
                 margin: 7px 0 0;
-
                 color: #555555;
-
                 font-size: 13px;
-
                 line-height: 1.5;
             }
 
@@ -532,61 +623,47 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-
                 margin-top: 12px;
-
                 padding: 8px 12px;
-
                 border: 0;
-                border-radius: 8px;
-
-                background: #111111;
+                border-radius: 9px;
+                background: #141414;
                 color: #ffffff;
-
                 font-family: inherit;
-
                 font-size: 12px;
                 font-weight: 600;
-
                 text-decoration: none;
-
                 cursor: pointer;
+                transition:
+                    opacity 150ms ease,
+                    transform 150ms ease;
             }
 
             .np-cta:hover {
-                opacity: 0.9;
+                opacity: 0.88;
+                transform: translateY(-1px);
             }
 
             .np-close {
                 position: absolute;
-
-                top: 8px;
-                right: 8px;
-
-                width: 24px;
-                height: 24px;
-
+                top: 7px;
+                right: 7px;
+                width: 25px;
+                height: 25px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-
                 padding: 0;
-
                 border: 0;
-
                 background: transparent;
-
-                color: #888888;
-
+                color: #999999;
                 font-family: inherit;
-
-                font-size: 16px;
-
+                font-size: 17px;
                 line-height: 1;
-
                 cursor: pointer;
-
-                opacity: 0.7;
+                opacity: 0.65;
+                transition:
+                    opacity 150ms ease;
             }
 
             .np-close:hover {
@@ -595,9 +672,9 @@
 
             @media (max-width: 480px) {
                 .np-notification {
-                    width: auto;
                     left: 16px !important;
                     right: 16px !important;
+                    width: auto;
                     max-width: none;
                 }
 
@@ -611,16 +688,26 @@
                     top: 16px;
                 }
             }
+
+            @media (prefers-reduced-motion: reduce) {
+                .np-notification {
+                    transition:
+                        opacity 150ms ease;
+                    transform: none;
+                }
+
+                .np-notification.np-visible {
+                    transform: none;
+                }
+
+                .np-cta {
+                    transition: none;
+                }
+            }
         `;
 
         state.shadow.appendChild(style);
     }
-
-    /*
-     * ------------------------------------------------------------------------
-     * Notification HTML
-     * ------------------------------------------------------------------------
-     */
 
     function createRecentSales(
         config,
@@ -634,57 +721,71 @@
             config.message ||
             "{name} purchased {product}";
 
-        var eventData =
-            event && event.data
+        var data =
+            event &&
+            event.data &&
+            typeof event.data === "object"
                 ? event.data
                 : {};
 
         var name =
-            eventData.name ||
-            "Someone";
+            typeof data.name === "string" &&
+            data.name.trim()
+                ? data.name.trim()
+                : "Someone";
 
         var product =
-            eventData.product ||
-            "a product";
+            typeof data.product === "string" &&
+            data.product.trim()
+                ? data.product.trim()
+                : "a product";
 
-        message = replacePlaceholder(
-            message,
-            "{name}",
-            name
+        message =
+            replacePlaceholder(
+                message,
+                "{name}",
+                escapeHtml(name)
+            );
+
+        message =
+            replacePlaceholder(
+                message,
+                "{product}",
+                escapeHtml(product)
+            );
+
+        var relativeTime =
+            event &&
+            event.created_at
+                ? formatRelativeTime(
+                      event.created_at
+                  )
+                : "Just now";
+
+        return (
+            '<div class="np-content">' +
+                '<div class="np-avatar">' +
+                    escapeHtml(
+                        getInitial(name)
+                    ) +
+                "</div>" +
+
+                '<div class="np-body">' +
+                    '<p class="np-title">' +
+                        escapeHtml(title) +
+                    "</p>" +
+
+                    '<p class="np-message">' +
+                        message +
+                    "</p>" +
+
+                    '<div class="np-meta">' +
+                        '<span class="np-dot"></span>' +
+                        escapeHtml(relativeTime) +
+                    "</div>" +
+                "</div>" +
+            "</div>"
         );
-
-        message = replacePlaceholder(
-            message,
-            "{product}",
-            product
-        );
-
-        var initial =
-            String(name)
-                .charAt(0)
-                .toUpperCase();
-
-        return `
-        <div class="np-content">
-            <div class="np-avatar">
-                ${escapeHtml(initial)}
-            </div>
-
-            <div class="np-body">
-                <p class="np-title">
-                    ${escapeHtml(title)}
-                </p>
-
-                <p class="np-message">
-                    ${escapeHtml(message)}
-                </p>
-
-                <p class="np-meta">
-                    Just now
-                </p>
-            </div>
-        </div>
-    `;
     }
 
     function createLiveVisitors(
@@ -697,53 +798,67 @@
         var minimum =
             safeNumber(
                 config.minimum_visitors,
-                2,
+                1,
                 1,
                 1000000
             );
 
-        /*
-         * Temporary demo count.
-         *
-         * Redis/live visitor data will be
-         * connected later.
-         */
-        var count = Math.max(
-            minimum,
-            12
+        var count =
+            safeNumber(
+                state.liveVisitors,
+                0,
+                0,
+                1000000
+            );
+
+        if (count < minimum) {
+            return "";
+        }
+
+        message =
+            replacePlaceholder(
+                message,
+                "{count}",
+                String(count)
+            );
+
+        return (
+            '<div class="np-content">' +
+                '<div class="np-live-icon"></div>' +
+
+                '<div class="np-body">' +
+                    '<p class="np-message">' +
+                        escapeHtml(message) +
+                    "</p>" +
+
+                    '<div class="np-meta">' +
+                        '<span class="np-dot"></span>' +
+                        "Live activity" +
+                    "</div>" +
+                "</div>" +
+            "</div>"
         );
-
-        message = replacePlaceholder(
-            message,
-            "{count}",
-            String(count)
-        );
-
-        return `
-            <div class="np-content">
-                <div class="np-live-dot"></div>
-
-                <div class="np-body">
-                    <p class="np-message">
-                        ${escapeHtml(message)}
-                    </p>
-
-                    <p class="np-meta">
-                        Live activity
-                    </p>
-                </div>
-            </div>
-        `;
     }
 
     function createReview(
-        config
+        config,
+        event
     ) {
-        var reviewer =
-            config.reviewer ||
-            "Sarah";
+        var data =
+            event &&
+            event.data &&
+            typeof event.data === "object"
+                ? event.data
+                : {};
 
-        var rating =
+        var reviewer =
+            typeof data.name === "string" &&
+            data.name.trim()
+                ? data.name.trim()
+                : config.reviewer ||
+                  "Customer";
+
+        var configuredRating =
             safeNumber(
                 config.rating,
                 5,
@@ -751,14 +866,22 @@
                 5
             );
 
-        var text =
-            config.text ||
-            "Amazing experience. I would definitely recommend this!";
+        var rating =
+            data.rating !== undefined
+                ? safeNumber(
+                      data.rating,
+                      configuredRating,
+                      1,
+                      5
+                  )
+                : configuredRating;
 
-        var initial =
-            String(reviewer)
-                .charAt(0)
-                .toUpperCase();
+        var text =
+            typeof data.text === "string" &&
+            data.text.trim()
+                ? data.text.trim()
+                : config.text ||
+                  "Amazing experience. I would definitely recommend this!";
 
         var stars = "";
 
@@ -769,33 +892,37 @@
         ) {
             stars +=
                 '<span class="np-star ' +
-                (i <= rating
-                    ? "np-star-active"
-                    : "np-star-inactive") +
+                (
+                    i <= rating
+                        ? "np-star-active"
+                        : "np-star-inactive"
+                ) +
                 '">★</span>';
         }
 
-        return `
-            <div class="np-content">
-                <div class="np-avatar">
-                    ${escapeHtml(initial)}
-                </div>
+        return (
+            '<div class="np-content">' +
+                '<div class="np-avatar">' +
+                    escapeHtml(
+                        getInitial(reviewer)
+                    ) +
+                "</div>" +
 
-                <div class="np-body">
-                    <p class="np-reviewer">
-                        ${escapeHtml(reviewer)}
-                    </p>
+                '<div class="np-body">' +
+                    '<p class="np-reviewer">' +
+                        escapeHtml(reviewer) +
+                    "</p>" +
 
-                    <div class="np-stars">
-                        ${stars}
-                    </div>
+                    '<div class="np-stars">' +
+                        stars +
+                    "</div>" +
 
-                    <p class="np-review-text">
-                        ${escapeHtml(text)}
-                    </p>
-                </div>
-            </div>
-        `;
+                    '<p class="np-review-text">' +
+                        escapeHtml(text) +
+                    "</p>" +
+                "</div>" +
+            "</div>"
+        );
     }
 
     function createAnnouncement(
@@ -806,49 +933,49 @@
             "Announcement";
 
         var message =
-            config.message ||
-            "We have something exciting to share with you.";
+            config.message || "";
 
-        var ctaText =
-            config.cta_text || "";
+        var buttonText =
+            typeof config.cta_text === "string"
+                ? config.cta_text.trim()
+                : "";
 
-        var ctaUrl =
-            config.cta_url || "";
+        var buttonUrl =
+            typeof config.cta_url === "string"
+                ? config.cta_url.trim()
+                : "";
 
         var cta = "";
 
         if (
-            ctaText &&
-            ctaUrl
+            buttonText &&
+            buttonUrl
         ) {
             cta =
-                `
-                <a
-                    class="np-cta"
-                    href="${escapeAttribute(
-                    ctaUrl
-                )}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    ${escapeHtml(ctaText)}
-                </a>
-                `;
+                '<a class="np-cta" href="' +
+                escapeAttribute(buttonUrl) +
+                '" target="_blank" rel="noopener noreferrer">' +
+                escapeHtml(buttonText) +
+                "</a>";
         }
 
-        return `
-            <div class="np-body">
-                <p class="np-title">
-                    ${escapeHtml(title)}
-                </p>
+        return (
+            '<div class="np-content">' +
+                '<div class="np-avatar">i</div>' +
 
-                <p class="np-message">
-                    ${escapeHtml(message)}
-                </p>
+                '<div class="np-body">' +
+                    '<p class="np-title">' +
+                        escapeHtml(title) +
+                    "</p>" +
 
-                ${cta}
-            </div>
-        `;
+                    '<p class="np-message">' +
+                        escapeHtml(message) +
+                    "</p>" +
+
+                    cta +
+                "</div>" +
+            "</div>"
+        );
     }
 
     function createNotificationContent(
@@ -872,7 +999,8 @@
 
             case "review":
                 return createReview(
-                    config
+                    config,
+                    event
                 );
 
             case "announcement":
@@ -885,375 +1013,1489 @@
         }
     }
 
-    /*
-     * ------------------------------------------------------------------------
-     * Render
-     * ------------------------------------------------------------------------
-     */
-
-    function renderWidget(
-        widget
+    function createNotification(
+        widget,
+        event,
+        visualPosition
     ) {
-        if (
-            !state.shadow ||
-            !widget
-        ) {
-            return;
-        }
-
-        if (
-            !widget.type ||
-            !widget.config
-        ) {
-            return;
-        }
-
-        var config =
-            widget.config || {};
-
         var position =
-            config.position ||
-            "bottom-left";
+            getPosition(visualPosition);
 
-        var notification =
-            document.createElement(
-                "div"
-            );
+        var element =
+            document.createElement("div");
 
-        notification.className =
-            "np-notification " +
-            "np-" +
+        element.className =
+            "np-notification np-" +
             position;
 
-        notification.setAttribute(
+        element.setAttribute(
             "data-widget-id",
-            widget.id || ""
+            widget.id
         );
 
-        var event = null;
+        element.setAttribute(
+            "data-widget-type",
+            widget.type
+        );
 
-        if (
-            widget.type === "recent_sales" &&
-            state.events &&
-            state.events.length
-        ) {
-            event = state.events[0];
+        element.innerHTML =
+            '<div class="np-notification-content">' +
+                createNotificationContent(
+                    widget,
+                    event
+                ) +
+            "</div>" +
+
+            '<button class="np-close" type="button" aria-label="Close">' +
+                "×" +
+            "</button>";
+
+        var closeButton =
+            element.querySelector(
+                ".np-close"
+            );
+
+        if (closeButton) {
+            closeButton.addEventListener(
+                "click",
+                function () {
+                    finishNotification(
+                        getQueuePosition(
+                            position
+                        ),
+                        element,
+                        true
+                    );
+                }
+            );
         }
 
-        notification.innerHTML =
-            createNotificationContent(
-                widget,
-                event
+        return element;
+    }
+
+    function getDuration(
+        widget
+    ) {
+        return safeNumber(
+            widget &&
+            widget.config &&
+            widget.config.duration,
+            5000,
+            1000,
+            60000
+        );
+    }
+
+    function getDelay(
+        widget
+    ) {
+        return safeNumber(
+            widget &&
+            widget.config &&
+            widget.config.delay,
+            3000,
+            0,
+            60000
+        );
+    }
+
+    function isSameQueueItem(
+        item,
+        widget,
+        event
+    ) {
+        if (
+            !item ||
+            !item.widget ||
+            item.widget.id !== widget.id
+        ) {
+            return false;
+        }
+
+        if (
+            event &&
+            event.id
+        ) {
+            return (
+                item.eventId ===
+                event.id
+            );
+        }
+
+        return true;
+    }
+
+    function enqueueNotification(
+        widget,
+        event,
+        options
+    ) {
+        if (
+            !widget ||
+            widget.status !== "active" ||
+            !state.initialized
+        ) {
+            return;
+        }
+
+        options =
+            options || {};
+
+        var visualPosition =
+            getPosition(
+                widget.config &&
+                widget.config.position
             );
 
-        /*
-         * Close button.
-         */
-        var close =
-            document.createElement(
-                "button"
+        var queuePosition =
+            getQueuePosition(
+                visualPosition
             );
 
-        close.type = "button";
+        var queue =
+            state.positionQueues[
+                queuePosition
+            ];
 
-        close.className =
-            "np-close";
+        if (!queue) {
+            return;
+        }
 
-        close.setAttribute(
-            "aria-label",
-            "Close notification"
+        var duplicateInQueue =
+            queue.some(
+                function (item) {
+                    return isSameQueueItem(
+                        item,
+                        widget,
+                        event
+                    );
+                }
+            );
+
+        if (duplicateInQueue) {
+            return;
+        }
+
+        var active =
+            state.activePositions[
+                queuePosition
+            ];
+
+        if (
+            active &&
+            active.widget &&
+            active.widget.id ===
+                widget.id &&
+            (
+                !event ||
+                active.eventId ===
+                    event.id
+            )
+        ) {
+            return;
+        }
+
+        if (
+            queue.length >=
+            MAX_QUEUE_SIZE
+        ) {
+            queue.shift();
+        }
+
+        queue.push({
+            widget: widget,
+            event:
+                event || null,
+
+            eventId:
+                event &&
+                event.id
+                    ? event.id
+                    : null,
+
+            visualPosition:
+                visualPosition,
+
+            queuePosition:
+                queuePosition,
+
+            delay:
+                options.skipDelay
+                    ? 0
+                    : getDelay(widget),
+
+            isLive:
+                options.isLive === true
+        });
+
+        showNextNotification(
+            queuePosition
         );
+    }
 
-        close.textContent = "×";
+    function showNextNotification(
+        queuePosition
+    ) {
+        if (
+            state.activePositions[
+                queuePosition
+            ]
+        ) {
+            return;
+        }
 
-        close.addEventListener(
-            "click",
-            function () {
-                hideNotification(
-                    notification
-                );
-            }
-        );
+        if (
+            state.queueWaiting[
+                queuePosition
+            ]
+        ) {
+            return;
+        }
 
-        notification.appendChild(
-            close
-        );
+        var queue =
+            state.positionQueues[
+                queuePosition
+            ];
 
-        state.shadow.appendChild(
-            notification
-        );
+        if (
+            !queue ||
+            !queue.length
+        ) {
+            return;
+        }
+
+        var item =
+            queue.shift();
 
         var delay =
             safeNumber(
-                config.delay,
-                3000,
+                item.delay,
+                0,
                 0,
                 60000
             );
 
-        var duration =
-            safeNumber(
-                config.duration,
-                5000,
-                1000,
-                120000
+        if (delay > 0) {
+            state.queueWaiting[
+                queuePosition
+            ] = true;
+
+            state.queueTimers[
+                queuePosition
+            ] =
+                window.setTimeout(
+                    function () {
+                        state.queueTimers[
+                            queuePosition
+                        ] = null;
+
+                        state.queueWaiting[
+                            queuePosition
+                        ] = false;
+
+                        if (
+                            state.activePositions[
+                                queuePosition
+                            ]
+                        ) {
+                            state.positionQueues[
+                                queuePosition
+                            ].unshift(item);
+
+                            return;
+                        }
+
+                        showQueuedNotification(
+                            queuePosition,
+                            item
+                        );
+                    },
+                    delay
+                );
+
+            return;
+        }
+
+        showQueuedNotification(
+            queuePosition,
+            item
+        );
+    }
+
+    function showQueuedNotification(
+        queuePosition,
+        item
+    ) {
+        if (
+            state.activePositions[
+                queuePosition
+            ]
+        ) {
+            state.positionQueues[
+                queuePosition
+            ].unshift(item);
+
+            return;
+        }
+
+        var element =
+            createNotification(
+                item.widget,
+                item.event,
+                item.visualPosition
             );
 
+        if (!element) {
+            showNextNotification(
+                queuePosition
+            );
+
+            return;
+        }
+
+        state.shadow.appendChild(
+            element
+        );
+
+        var active = {
+            widget:
+                item.widget,
+
+            event:
+                item.event,
+
+            eventId:
+                item.eventId,
+
+            element:
+                element,
+
+            isLive:
+                item.isLive === true,
+
+            visualPosition:
+                item.visualPosition,
+
+            queuePosition:
+                queuePosition,
+
+            durationTimer:
+                null,
+
+            finishing:
+                false
+        };
+
+        state.activePositions[
+            queuePosition
+        ] = active;
+
         /*
-         * Show after configured delay.
+         * IMPORTANT:
+         *
+         * The 60 second Live Visitors cooldown
+         * starts when the notification ACTUALLY
+         * appears, not when it gets queued.
          */
-        var showTimer =
+        if (active.isLive) {
+            var liveWidgetId =
+                item.widget.id;
+
+            state.lastLiveShown[
+                liveWidgetId
+            ] = Date.now();
+
+            if (
+                state.liveCooldownTimers[
+                    liveWidgetId
+                ]
+            ) {
+                window.clearTimeout(
+                    state.liveCooldownTimers[
+                        liveWidgetId
+                    ]
+                );
+            }
+
+            state.liveCooldownTimers[
+                liveWidgetId
+            ] =
+                window.setTimeout(
+                    function () {
+                        delete state.liveCooldownTimers[
+                            liveWidgetId
+                        ];
+
+                        if (
+                            !state.initialized
+                        ) {
+                            return;
+                        }
+
+                        var currentWidget =
+                            state.widgets.find(
+                                function (
+                                    widget
+                                ) {
+                                    return (
+                                        widget &&
+                                        widget.id ===
+                                            liveWidgetId
+                                    );
+                                }
+                            );
+
+                        if (
+                            currentWidget &&
+                            currentWidget.status ===
+                                "active" &&
+                            currentWidget.type ===
+                                "live_visitors"
+                        ) {
+                            updateLiveNotification(
+                                currentWidget
+                            );
+                        }
+                    },
+                    LIVE_VISITOR_COOLDOWN
+                );
+        }
+
+        requestAnimationFrame(
+            function () {
+                requestAnimationFrame(
+                    function () {
+                        if (
+                            element.parentNode
+                        ) {
+                            element.classList.add(
+                                "np-visible"
+                            );
+                        }
+                    }
+                );
+            }
+        );
+
+        /*
+         * Every notification, including Live Visitors,
+         * always gets a duration timer.
+         */
+        active.durationTimer =
             window.setTimeout(
                 function () {
-                    showNotification(
-                        notification
-                    );
-
-                    /*
-                     * Automatically hide after
-                     * configured duration.
-                     */
-                    var hideTimer =
-                        window.setTimeout(
-                            function () {
-                                hideNotification(
-                                    notification
-                                );
-
-                                /*
-                                 * Remove from DOM after
-                                 * transition completes.
-                                 */
-                                window.setTimeout(
-                                    function () {
-                                        if (
-                                            notification
-                                                .parentNode
-                                        ) {
-                                            notification.parentNode.removeChild(
-                                                notification
-                                            );
-                                        }
-                                    },
-                                    250
-                                );
-                            },
-                            duration
-                        );
-
-                    state.activeTimers.push(
-                        hideTimer
+                    finishNotification(
+                        queuePosition,
+                        element,
+                        false
                     );
                 },
-                delay
+                getDuration(
+                    item.widget
+                )
             );
-
-        state.activeTimers.push(
-            showTimer
-        );
     }
 
-    function showNotification(
-        element
+    function finishNotification(
+        queuePosition,
+        element,
+        immediate
     ) {
-        /*
-         * Force layout before adding
-         * the visible class so CSS
-         * transition works reliably.
-         */
-        void element.offsetWidth;
+        var active =
+            state.activePositions[
+                queuePosition
+            ];
 
-        element.classList.add(
-            "np-visible"
-        );
-    }
-
-    function hideNotification(
-        element
-    ) {
-        element.classList.remove(
-            "np-visible"
-        );
-    }
-
-    /*
-     * ------------------------------------------------------------------------
-     * Widget scheduling
-     * ------------------------------------------------------------------------
-     */
-
-    function renderWidgets() {
         if (
-            !state.widgets ||
-            !state.widgets.length
+            !active ||
+            active.element !== element ||
+            active.finishing
         ) {
             return;
         }
 
-        state.widgets.forEach(
-            function (widget) {
-                renderWidget(widget);
-            }
+        active.finishing = true;
+
+        if (
+            active.durationTimer
+        ) {
+            window.clearTimeout(
+                active.durationTimer
+            );
+
+            active.durationTimer = null;
+        }
+
+        element.classList.remove(
+            "np-visible"
+        );
+
+        var removeDelay =
+            immediate ? 0 : 240;
+
+        window.setTimeout(
+            function () {
+                if (
+                    element.parentNode
+                ) {
+                    element.parentNode.removeChild(
+                        element
+                    );
+                }
+
+                if (
+                    state.activePositions[
+                        queuePosition
+                    ] === active
+                ) {
+                    state.activePositions[
+                        queuePosition
+                    ] = null;
+                }
+
+                showNextNotification(
+                    queuePosition
+                );
+            },
+            removeDelay
         );
     }
 
     /*
-     * ------------------------------------------------------------------------
-     * API
-     * ------------------------------------------------------------------------
+     * LIVE VISITORS
+     *
+     * This is intentionally different from normal
+     * event widgets.
+     *
+     * It does NOT create a permanent notification.
+     * It simply schedules a normal notification.
+     *
+     * Once shown:
+     *   - duration controls how long it remains visible
+     *   - 60 second cooldown prevents another display
+     *   - visitor tracking continues independently
      */
+    function updateLiveNotification(
+        widget
+    ) {
+        if (
+            !widget ||
+            widget.status !== "active" ||
+            widget.type !== "live_visitors"
+        ) {
+            return;
+        }
+
+        var visualPosition =
+            getPosition(
+                widget.config &&
+                widget.config.position
+            );
+
+        var queuePosition =
+            getQueuePosition(
+                visualPosition
+            );
+
+        var minimum =
+            safeNumber(
+                widget.config &&
+                widget.config.minimum_visitors,
+                1,
+                1,
+                1000000
+            );
+
+        var count =
+            safeNumber(
+                state.liveVisitors,
+                0,
+                0,
+                1000000
+            );
+
+        /*
+         * Do not queue a Live Visitors popup
+         * if the visitor count is below the
+         * configured minimum.
+         */
+        if (count < minimum) {
+            state.positionQueues[
+                queuePosition
+            ] =
+                state.positionQueues[
+                    queuePosition
+                ].filter(
+                    function (item) {
+                        return !(
+                            item &&
+                            item.isLive === true &&
+                            item.widget &&
+                            item.widget.id ===
+                                widget.id
+                        );
+                    }
+                );
+
+            return;
+        }
+
+        /*
+         * If this same Live Visitors widget
+         * is currently visible, do nothing.
+         *
+         * Its duration timer controls when it
+         * disappears.
+         */
+        var active =
+            state.activePositions[
+                queuePosition
+            ];
+
+        if (
+            active &&
+            active.widget &&
+            active.widget.id ===
+                widget.id &&
+            active.isLive
+        ) {
+            return;
+        }
+
+        /*
+         * Don't put another copy of the same
+         * Live Visitors widget into the queue.
+         */
+        var queue =
+            state.positionQueues[
+                queuePosition
+            ];
+
+        var alreadyQueued =
+            queue.some(
+                function (item) {
+                    return (
+                        item &&
+                        item.isLive === true &&
+                        item.widget &&
+                        item.widget.id ===
+                            widget.id
+                    );
+                }
+            );
+
+        if (alreadyQueued) {
+            return;
+        }
+
+        /*
+         * 60-second cooldown.
+         */
+        var now = Date.now();
+
+        var lastShown =
+            state.lastLiveShown[
+                widget.id
+            ] || 0;
+
+        if (
+            now - lastShown <
+            LIVE_VISITOR_COOLDOWN
+        ) {
+            return;
+        }
+
+        /*
+         * Queue as a NORMAL timed notification.
+         *
+         * There is deliberately no special
+         * "persistent live notification" path.
+         */
+        enqueueNotification(
+            widget,
+            null,
+            {
+                skipDelay: false,
+                isLive: true
+            }
+        );
+    }
+
+    function getLatestUnseenEvent(
+        type
+    ) {
+        for (
+            var i = 0;
+            i < state.events.length;
+            i++
+        ) {
+            var event =
+                state.events[i];
+
+            if (
+                !event ||
+                event.type !== type ||
+                !event.id ||
+                state.shownEventIds[
+                    event.id
+                ]
+            ) {
+                continue;
+            }
+
+            return event;
+        }
+
+        return null;
+    }
+
+    function markEventShown(
+        event
+    ) {
+        if (
+            event &&
+            event.id
+        ) {
+            state.shownEventIds[
+                event.id
+            ] = true;
+        }
+    }
+
+    function processPurchaseWidgets() {
+        var purchase =
+            getLatestUnseenEvent(
+                "purchase"
+            );
+
+        if (!purchase) {
+            return;
+        }
+
+        var widgets =
+            state.widgets.filter(
+                function (widget) {
+                    return (
+                        widget &&
+                        widget.status ===
+                            "active" &&
+                        widget.type ===
+                            "recent_sales"
+                    );
+                }
+            );
+
+        if (!widgets.length) {
+            return;
+        }
+
+        widgets.forEach(
+            function (widget) {
+                enqueueNotification(
+                    widget,
+                    purchase
+                );
+            }
+        );
+
+        markEventShown(
+            purchase
+        );
+    }
+
+    function processReviewWidgets() {
+        var widgets =
+            state.widgets.filter(
+                function (widget) {
+                    return (
+                        widget &&
+                        widget.status ===
+                            "active" &&
+                        widget.type ===
+                            "review"
+                    );
+                }
+            );
+
+        if (!widgets.length) {
+            return;
+        }
+
+        var review =
+            getLatestUnseenEvent(
+                "review"
+            );
+
+        if (review) {
+            widgets.forEach(
+                function (widget) {
+                    enqueueNotification(
+                        widget,
+                        review
+                    );
+                }
+            );
+
+            markEventShown(
+                review
+            );
+
+            return;
+        }
+
+        var hasReviewEvent =
+            state.events.some(
+                function (event) {
+                    return (
+                        event &&
+                        event.type ===
+                            "review"
+                    );
+                }
+            );
+
+        if (hasReviewEvent) {
+            return;
+        }
+
+        widgets.forEach(
+            function (widget) {
+                if (
+                    state
+                        .shownFallbackReviewIds[
+                        widget.id
+                    ]
+                ) {
+                    return;
+                }
+
+                state.shownFallbackReviewIds[
+                    widget.id
+                ] = true;
+
+                enqueueNotification(
+                    widget,
+                    null
+                );
+            }
+        );
+    }
+
+    function processAnnouncementWidgets() {
+        state.widgets.forEach(
+            function (widget) {
+                if (
+                    !widget ||
+                    widget.status !==
+                        "active" ||
+                    widget.type !==
+                        "announcement"
+                ) {
+                    return;
+                }
+
+                if (
+                    state
+                        .shownAnnouncementIds[
+                        widget.id
+                    ]
+                ) {
+                    return;
+                }
+
+                state.shownAnnouncementIds[
+                    widget.id
+                ] = true;
+
+                enqueueNotification(
+                    widget,
+                    null
+                );
+            }
+        );
+    }
+
+    function processLiveWidgets() {
+        state.widgets.forEach(
+            function (widget) {
+                if (
+                    widget &&
+                    widget.status ===
+                        "active" &&
+                    widget.type ===
+                        "live_visitors"
+                ) {
+                    updateLiveNotification(
+                        widget
+                    );
+                }
+            }
+        );
+    }
+
+    function processWidgets() {
+        if (!state.initialized) {
+            return;
+        }
+
+        processPurchaseWidgets();
+        processReviewWidgets();
+        processAnnouncementWidgets();
+        processLiveWidgets();
+    }
+
+    function normalizeConfig(
+        widget
+    ) {
+        if (
+            !widget.config ||
+            typeof widget.config !==
+                "object"
+        ) {
+            widget.config = {};
+        }
+
+        widget.config.position =
+            getPosition(
+                widget.config.position
+            );
+
+        if (
+            widget.config.duration ===
+            undefined
+        ) {
+            widget.config.duration =
+                5000;
+        }
+
+        if (
+            widget.config.delay ===
+            undefined
+        ) {
+            widget.config.delay =
+                3000;
+        }
+
+        return widget;
+    }
+
+    function normalizeWidgets(
+        widgets
+    ) {
+        return (
+            Array.isArray(widgets)
+                ? widgets
+                : []
+        ).map(
+            function (widget) {
+                return normalizeConfig(
+                    widget
+                );
+            }
+        );
+    }
 
     function loadConfiguration() {
         return fetch(
             API_URL,
             {
                 method: "GET",
+                mode: "cors",
+                credentials: "omit",
+                cache: "no-store",
                 headers: {
                     Accept:
                         "application/json"
-                },
-                credentials: "omit",
-                cache: "no-store"
+                }
             }
         )
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error(
-                        "NudgeProof API request failed: " +
-                        response.status
-                    );
+            .then(
+                function (response) {
+                    if (!response.ok) {
+                        throw new Error(
+                            "Failed to load NudgeProof configuration"
+                        );
+                    }
+
+                    return response.json();
                 }
+            )
+            .then(
+                function (data) {
+                    if (
+                        !data ||
+                        !data.site
+                    ) {
+                        throw new Error(
+                            "Invalid NudgeProof configuration"
+                        );
+                    }
 
-                return response.json();
-            })
-            .then(function (data) {
-                if (
-                    !data ||
-                    !Array.isArray(
-                        data.widgets
-                    )
-                ) {
-                    return;
+                    state.site =
+                        data.site;
+
+                    state.widgets =
+                        normalizeWidgets(
+                            data.widgets
+                        );
+
+                    state.events =
+                        Array.isArray(
+                            data.events
+                        )
+                            ? data.events
+                            : [];
+
+                    state.initialized =
+                        true;
+
+                    createRoot();
+
+                    processWidgets();
+
+                    scheduleEventPolling();
+                    scheduleVisitorPolling();
+                    startVisitorHeartbeat();
                 }
+            )
+            .catch(
+                function () {
+                    state.initialized =
+                        false;
 
-                state.site =
-                    data.site || null;
-
-                state.widgets =
-                    data.widgets.filter(
-                        function (widget) {
-                            return (
-                                widget &&
-                                widget.status ===
-                                "active"
-                            );
-                        }
-                    );
-
-                state.events =
-                    Array.isArray(data.events)
-                        ? data.events
-                        : [];
-            });
+                    scheduleRetry();
+                }
+            );
     }
 
-    /*
-     * ------------------------------------------------------------------------
-     * Initialization
-     * ------------------------------------------------------------------------
-     */
-
-    function initialize() {
-        if (state.initialized) {
+    function pollEvents() {
+        if (
+            !state.initialized
+        ) {
             return;
         }
 
-        state.initialized = true;
+        fetch(
+            API_URL,
+            {
+                method: "GET",
+                mode: "cors",
+                credentials: "omit",
+                cache: "no-store",
+                headers: {
+                    Accept:
+                        "application/json"
+                }
+            }
+        )
+            .then(
+                function (response) {
+                    if (!response.ok) {
+                        throw new Error(
+                            "Event polling failed"
+                        );
+                    }
 
-        /*
-         * Wait for the body because the script
-         * can be loaded in the <head>.
-         */
-        if (!document.body) {
+                    return response.json();
+                }
+            )
+            .then(
+                function (data) {
+                    if (!data) {
+                        return;
+                    }
+
+                    if (
+                        Array.isArray(
+                            data.events
+                        )
+                    ) {
+                        state.events =
+                            data.events;
+                    }
+
+                    if (
+                        Array.isArray(
+                            data.widgets
+                        )
+                    ) {
+                        state.widgets =
+                            normalizeWidgets(
+                                data.widgets
+                            );
+                    }
+
+                    processWidgets();
+                }
+            )
+            .catch(
+                function () {}
+            )
+            .finally(
+                function () {
+                    scheduleEventPolling();
+                }
+            );
+    }
+
+    function scheduleEventPolling() {
+        clearPollTimer();
+
+        state.pollTimer =
             window.setTimeout(
-                initialize,
-                0
+                function () {
+                    state.pollTimer =
+                        null;
+
+                    pollEvents();
+                },
+                POLL_INTERVAL
+            );
+    }
+
+    function scheduleRetry() {
+        clearPollTimer();
+
+        state.pollTimer =
+            window.setTimeout(
+                function () {
+                    state.pollTimer =
+                        null;
+
+                    loadConfiguration();
+                },
+                10000
+            );
+    }
+
+        function getVisitorId() {
+        var storageKey =
+            "nudgeproof_visitor_id";
+
+        try {
+            var existing =
+                window.localStorage.getItem(
+                    storageKey
+                );
+
+            if (existing) {
+                return existing;
+            }
+
+            var generated =
+                "v_" +
+                Date.now() +
+                "_" +
+                Math.random()
+                    .toString(36)
+                    .slice(2, 12);
+
+            window.localStorage.setItem(
+                storageKey,
+                generated
             );
 
+            return generated;
+        } catch (error) {
+            return (
+                "v_" +
+                Date.now() +
+                "_" +
+                Math.random()
+                    .toString(36)
+                    .slice(2, 12)
+            );
+        }
+    }
+
+    var visitorId =
+        getVisitorId();
+
+    function sendHeartbeat() {
+        if (
+            !state.initialized
+        ) {
             return;
         }
 
-        createRoot();
+        fetch(
+            VISITORS_API_URL +
+                "/heartbeat",
+            {
+                method: "POST",
+                mode: "cors",
+                credentials: "omit",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body: JSON.stringify({
+                    visitor_id:
+                        visitorId,
 
-        loadConfiguration()
-            .then(function () {
-                renderWidgets();
-            })
-            .catch(function (error) {
-                /*
-                 * NudgeProof must never break
-                 * the customer's website.
-                 */
-                console.warn(
-                    "[NudgeProof] Embed failed to load.",
-                    error
-                );
-            });
+                    page:
+                        window.location.href
+                }),
+                keepalive: true
+            }
+        )
+            .then(
+                function (response) {
+                    if (!response.ok) {
+                        throw new Error(
+                            "Heartbeat failed"
+                        );
+                    }
+
+                    return response.json();
+                }
+            )
+            .then(
+                function (data) {
+                    if (
+                        data &&
+                        typeof data.count ===
+                            "number"
+                    ) {
+                        state.liveVisitors =
+                            data.count;
+
+                        updateLiveWidgets();
+                    }
+                }
+            )
+            .catch(
+                function () {}
+            );
     }
 
-    /*
-     * Start as soon as the DOM is ready.
-     */
+    function startVisitorHeartbeat() {
+        clearVisitorHeartbeat();
+
+        /*
+         * Initial heartbeat immediately.
+         */
+        sendHeartbeat();
+
+        /*
+         * Continue tracking visitors in the
+         * background regardless of whether the
+         * Live Visitors popup is currently visible.
+         */
+        state.visitorHeartbeatTimer =
+            window.setInterval(
+                sendHeartbeat,
+                VISITOR_HEARTBEAT_INTERVAL
+            );
+    }
+
+    function pollVisitors() {
+        if (
+            !state.initialized
+        ) {
+            return;
+        }
+
+        fetch(
+            VISITORS_API_URL,
+            {
+                method: "GET",
+                mode: "cors",
+                credentials: "omit",
+                cache: "no-store",
+                headers: {
+                    Accept:
+                        "application/json"
+                }
+            }
+        )
+            .then(
+                function (response) {
+                    if (!response.ok) {
+                        throw new Error(
+                            "Visitor polling failed"
+                        );
+                    }
+
+                    return response.json();
+                }
+            )
+            .then(
+                function (data) {
+                    if (
+                        data &&
+                        typeof data.count ===
+                            "number"
+                    ) {
+                        state.liveVisitors =
+                            data.count;
+
+                        updateLiveWidgets();
+                    }
+                }
+            )
+            .catch(
+                function () {}
+            )
+            .finally(
+                function () {
+                    scheduleVisitorPolling();
+                }
+            );
+    }
+
+    function scheduleVisitorPolling() {
+        clearVisitorPolling();
+
+        state.visitorPollTimer =
+            window.setTimeout(
+                function () {
+                    state.visitorPollTimer =
+                        null;
+
+                    pollVisitors();
+                },
+                POLL_INTERVAL
+            );
+    }
+
+    function updateLiveWidgets() {
+        state.widgets.forEach(
+            function (widget) {
+                if (
+                    widget &&
+                    widget.type ===
+                        "live_visitors" &&
+                    widget.status ===
+                        "active"
+                ) {
+                    updateLiveNotification(
+                        widget
+                    );
+                }
+            }
+        );
+    }
+
+    function removeElement(
+        element
+    ) {
+        if (
+            element &&
+            element.parentNode
+        ) {
+            element.parentNode.removeChild(
+                element
+            );
+        }
+    }
+
+    function resetQueues() {
+        QUEUE_POSITIONS.forEach(
+            function (queuePosition) {
+                state.positionQueues[
+                    queuePosition
+                ] = [];
+
+                if (
+                    state.queueTimers[
+                        queuePosition
+                    ]
+                ) {
+                    window.clearTimeout(
+                        state.queueTimers[
+                            queuePosition
+                        ]
+                    );
+
+                    state.queueTimers[
+                        queuePosition
+                    ] = null;
+                }
+
+                state.queueWaiting[
+                    queuePosition
+                ] = false;
+
+                var active =
+                    state.activePositions[
+                        queuePosition
+                    ];
+
+                if (
+                    active &&
+                    active.element
+                ) {
+                    removeElement(
+                        active.element
+                    );
+                }
+
+                state.activePositions[
+                    queuePosition
+                ] = null;
+            }
+        );
+    }
+
+    function reload() {
+        clearTimers();
+
+        clearPollTimer();
+        clearVisitorPolling();
+        clearVisitorHeartbeat();
+
+        resetQueues();
+
+        state.site = null;
+        state.widgets = [];
+        state.events = [];
+        state.liveVisitors = null;
+
+        state.shownEventIds = {};
+        state.shownAnnouncementIds = {};
+        state.shownFallbackReviewIds = {};
+
+        state.lastLiveShown = {};
+        state.liveCooldownTimers = {};
+
+        state.initialized = false;
+
+        if (state.root) {
+            removeElement(
+                state.root
+            );
+        }
+
+        state.root = null;
+        state.shadow = null;
+
+        loadConfiguration();
+    }
+
+    window.NudgeProof =
+        window.NudgeProof || {};
+
+    window.NudgeProof.reload =
+        reload;
+
+    window.NudgeProof.version =
+        SCRIPT_VERSION;
+
     if (
         document.readyState ===
         "loading"
     ) {
         document.addEventListener(
             "DOMContentLoaded",
-            initialize,
+            function () {
+                loadConfiguration();
+            },
             {
                 once: true
             }
         );
     } else {
-        initialize();
+        loadConfiguration();
     }
-
-    /*
-     * Expose a tiny public API.
-     *
-     * This is useful for future integrations
-     * and debugging without exposing internals.
-     */
-    window.NudgeProof = {
-        version: SCRIPT_VERSION,
-
-        reload: function () {
-            clearTimers();
-
-            if (state.shadow) {
-                var notifications =
-                    state.shadow.querySelectorAll(
-                        ".np-notification"
-                    );
-
-                notifications.forEach(
-                    function (element) {
-                        element.remove();
-                    }
-                );
-            }
-
-            loadConfiguration()
-                .then(function () {
-                    renderWidgets();
-                })
-                .catch(function (error) {
-                    console.warn(
-                        "[NudgeProof] Reload failed.",
-                        error
-                    );
-                });
-        }
-    };
 })();
