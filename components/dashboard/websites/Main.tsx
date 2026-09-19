@@ -3,6 +3,12 @@ import {
     Globe,
     Plus,
     ArrowUpRight,
+    Code2,
+    BarChart3,
+    Settings,
+    Zap,
+    ExternalLink,
+    Copy,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -32,10 +38,10 @@ export default async function Websites() {
 
     const { data: websites } = profile?.account_id
         ? await supabase
-            .from("websites")
-            .select("*")
-            .eq("account_id", profile.account_id)
-            .order("created_at", { ascending: false })
+              .from("websites")
+              .select("*")
+              .eq("account_id", profile.account_id)
+              .order("created_at", { ascending: false })
         : { data: [] };
 
     return (
@@ -54,69 +60,296 @@ export default async function Websites() {
             />
 
             {websites && websites.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-3">
+                <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
                     {websites.map((website) => (
                         <Link
                             key={website.id}
                             href={`/dashboard/websites/${website.id}`}
                             className="group block"
                         >
-                            <div className="relative overflow-hidden rounded-2xl p-px">
-                                {/* Animated border */}
-                                <div className="pointer-events-none absolute inset-[-100%] hidden animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,transparent_45%,#007fff_50%,transparent_55%,transparent_100%)] opacity-0 transition-opacity duration-300 group-hover:block group-hover:opacity-100" />
+                            <Card
+                                className="
+                                    overflow-hidden
+                                    rounded-2xl
+                                    border
+                                    border-border/70
+                                    bg-white
+                                    shadow-[0_1px_3px_rgba(0,0,0,0.03)]
+                                    transition-all
+                                    duration-200
+                                    hover:-translate-y-0.5
+                                    hover:border-primary/20
+                                    hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]
+                                "
+                            >
+                                {/* =========================
+                                    HEADER
+                                ========================= */}
 
-                                {/* Card */}
-                                <Card
-                                    className="
-                                        relative rounded-[15px]
-                                        border border-2 border-primary/15
-                                        shadow-[0_1px_3px_rgba(0,127,255,0.04)]
-                                        transition-all duration-300
-                                        group-hover:-translate-y-0.5
-                                        group-hover:border-primary/40
-                                        group-hover:shadow-[0_8px_30px_rgba(0,127,255,0.10)]
-                                    "
-                                >                                    <div className="flex min-h-[92px] items-center gap-4 px-5 py-4 sm:px-6">
-                                        {/* Website icon */}
-                                        <div className="relative flex size-11 shrink-0 items-center justify-center rounded-xl border border-primary/15 bg-primary/[0.07] transition-all duration-300 group-hover:border-primary/25 group-hover:bg-primary/10">
-                                            <Globe className="size-5 text-primary transition-transform duration-300 group-hover:scale-105" />
-                                        </div>
-
-                                        {/* Website details */}
-                                        <div className="min-w-0 flex-1">
-                                            <div className="flex items-center gap-2.5">
-                                                <h2 className="truncate text-sm font-semibold tracking-tight">
-                                                    {website.name}
-                                                </h2>
-
-                                                <StatusBadge
-                                                    status={website.status}
-                                                />
+                                <div className="px-4 pt-4">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="flex min-w-0 items-center gap-3">
+                                            <div
+                                                className="
+                                                    flex
+                                                    size-10
+                                                    shrink-0
+                                                    items-center
+                                                    justify-center
+                                                    rounded-xl
+                                                    border
+                                                    border-primary/10
+                                                    bg-primary/[0.06]
+                                                "
+                                            >
+                                                <Globe className="size-[18px] text-primary" />
                                             </div>
 
-                                            <p className="mt-1 truncate text-sm text-muted-foreground">
-                                                {website.url}
-                                            </p>
+                                            <div className="min-w-0">
+                                                <div className="flex items-center gap-2">
+                                                    <h2 className="truncate text-[13px] font-semibold tracking-tight">
+                                                        {website.name}
+                                                    </h2>
+
+                                                    <ExternalLink className="size-3 shrink-0 text-muted-foreground/60" />
+                                                </div>
+
+                                                <p className="mt-0.5 truncate text-[10px] text-muted-foreground">
+                                                    Production · NudgeProof
+                                                </p>
+                                            </div>
                                         </div>
 
-                                        {/* Site ID */}
-                                        <div className="hidden w-[210px] lg:block">
-                                            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                                                Site ID
+                                        <StatusBadge status={website.status} />
+                                    </div>
+                                </div>
+
+                                {/* =========================
+                                    SITE KEY
+                                ========================= */}
+
+                                <div className="px-4 pt-4">
+                                    <div
+                                        className="
+                                            flex
+                                            items-center
+                                            justify-between
+                                            gap-3
+                                            rounded-lg
+                                            border
+                                            border-border/60
+                                            bg-muted/[0.35]
+                                            px-3
+                                            py-2
+                                        "
+                                    >
+                                        <div className="min-w-0">
+                                            <p className="text-[8px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                                                Site key
                                             </p>
 
-                                            <p className="mt-1 truncate font-mono text-xs text-muted-foreground/80">
+                                            <p className="mt-0.5 truncate font-mono text-[10px] text-foreground/70">
                                                 {website.site_key}
                                             </p>
                                         </div>
-
-                                        {/* Arrow */}
-                                        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl text-muted-foreground transition-all duration-300 group-hover:bg-primary/5 group-hover:text-primary">
-                                            <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                                        </div>
                                     </div>
-                                </Card>
-                            </div>
+                                </div>
+
+                                {/* =========================
+                                    METRICS UI
+                                    ========================= */}
+
+                                {/* <div className="grid grid-cols-3 gap-2 px-4 pt-3">
+                                    <div
+                                        className="
+                                            rounded-xl
+                                            border
+                                            border-border/60
+                                            bg-muted/[0.25]
+                                            px-3
+                                            py-2.5
+                                        "
+                                    >
+                                        <p className="text-[8px] font-medium text-muted-foreground">
+                                            Nudges
+                                        </p>
+
+                                        <p className="mt-1 text-[16px] font-semibold tracking-tight">
+                                            —
+                                        </p>
+
+                                        <p className="mt-0.5 text-[8px] text-muted-foreground">
+                                            No data yet
+                                        </p>
+                                    </div>
+
+                                    <div
+                                        className="
+                                            rounded-xl
+                                            border
+                                            border-border/60
+                                            bg-muted/[0.25]
+                                            px-3
+                                            py-2.5
+                                        "
+                                    >
+                                        <p className="text-[8px] font-medium text-muted-foreground">
+                                            Conv. Rate
+                                        </p>
+
+                                        <p className="mt-1 text-[16px] font-semibold tracking-tight">
+                                            —
+                                        </p>
+
+                                        <p className="mt-0.5 text-[8px] text-muted-foreground">
+                                            No data yet
+                                        </p>
+                                    </div>
+
+                                    <div
+                                        className="
+                                            rounded-xl
+                                            border
+                                            border-border/60
+                                            bg-muted/[0.25]
+                                            px-3
+                                            py-2.5
+                                        "
+                                    >
+                                        <p className="text-[8px] font-medium text-muted-foreground">
+                                            Latency
+                                        </p>
+
+                                        <p className="mt-1 text-[16px] font-semibold tracking-tight">
+                                            —
+                                        </p>
+
+                                        <p className="mt-0.5 text-[8px] text-muted-foreground">
+                                            No data yet
+                                        </p>
+                                    </div>
+                                </div> */}
+
+                                {/* =========================
+                                    WIDGET PREVIEW
+                                ========================= */}
+
+                                <div className="px-4 pt-3">
+                                    <div
+                                        className="
+                                            flex
+                                            items-center
+                                            gap-3
+                                            rounded-xl
+                                            border
+                                            border-primary/10
+                                            bg-primary/[0.035]
+                                            px-3
+                                            py-2.5
+                                        "
+                                    >
+                                        <div
+                                            className="
+                                                flex
+                                                size-7
+                                                shrink-0
+                                                items-center
+                                                justify-center
+                                                rounded-lg
+                                                bg-primary/10
+                                            "
+                                        >
+                                            <Zap className="size-3.5 text-primary" />
+                                        </div>
+
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate text-[10px] font-medium">
+                                                NudgeProof Widget
+                                            </p>
+
+                                            <p className="mt-0.5 text-[8px] text-muted-foreground">
+                                                Ready to configure
+                                            </p>
+                                        </div>
+
+                                        <ArrowUpRight className="size-3.5 text-muted-foreground/50 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                                    </div>
+                                </div>
+
+                                {/* =========================
+                                    DIVIDER
+                                ========================= */}
+
+                                {/* <div className="mx-4 mt-4 border-t border-border/50" /> */}
+
+                                {/* =========================
+                                    FOOTER
+                                ========================= */}
+
+                                <div className="flex items-center justify-end px-4 py-3">
+                                    {/* <div className="flex items-center gap-2">
+                                        <div
+                                            className="
+                                                inline-flex
+                                                items-center
+                                                gap-1.5
+                                                rounded-lg
+                                                border
+                                                border-border/60
+                                                px-2.5
+                                                py-1.5
+                                                text-[9px]
+                                                font-medium
+                                                text-muted-foreground
+                                                transition-colors
+                                                group-hover:border-primary/15
+                                                group-hover:text-foreground
+                                            "
+                                        >
+                                            <Code2 className="size-3" />
+                                            Get Snippet
+                                        </div>
+
+                                        <div
+                                            className="
+                                                inline-flex
+                                                items-center
+                                                gap-1.5
+                                                rounded-lg
+                                                border
+                                                border-border/60
+                                                px-2.5
+                                                py-1.5
+                                                text-[9px]
+                                                font-medium
+                                                text-muted-foreground
+                                                transition-colors
+                                                group-hover:border-primary/15
+                                                group-hover:text-foreground
+                                            "
+                                        >
+                                            <BarChart3 className="size-3" />
+                                            Analytics
+                                        </div>
+                                    </div> */}
+
+                                    {/* <div
+                                        className="
+                                            flex
+                                            size-7
+                                            items-center
+                                            justify-center
+                                            rounded-lg
+                                            text-muted-foreground
+                                            transition-colors
+                                            group-hover:bg-primary/5
+                                            group-hover:text-primary
+                                        "
+                                    >
+                                        <Settings className="size-3.5" />
+                                    </div> */}
+                                </div>
+                            </Card>
                         </Link>
                     ))}
                 </div>

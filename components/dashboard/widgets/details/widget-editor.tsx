@@ -98,7 +98,7 @@ export default function WidgetEditor({
             if (!response.ok) {
                 setError(
                     data.error ??
-                        "Failed to save widget"
+                    "Failed to save widget"
                 );
 
                 return;
@@ -151,7 +151,7 @@ export default function WidgetEditor({
             if (!response.ok) {
                 setError(
                     data.error ??
-                        "Failed to update status"
+                    "Failed to update status"
                 );
 
                 return;
@@ -196,7 +196,7 @@ export default function WidgetEditor({
             if (!response.ok) {
                 setError(
                     data.error ??
-                        "Failed to delete widget"
+                    "Failed to delete widget"
                 );
 
                 return;
@@ -265,38 +265,38 @@ export default function WidgetEditor({
                 {/* Recent Sales */}
                 {widget.type ===
                     "recent_sales" && (
-                    <RecentSalesEditor
-                        config={widget.config}
-                        updateConfig={updateConfig}
-                    />
-                )}
+                        <RecentSalesEditor
+                            config={widget.config}
+                            updateConfig={updateConfig}
+                        />
+                    )}
 
                 {/* Live Visitors */}
                 {widget.type ===
                     "live_visitors" && (
-                    <LiveVisitorsEditor
-                        config={widget.config}
-                        updateConfig={updateConfig}
-                    />
-                )}
+                        <LiveVisitorsEditor
+                            config={widget.config}
+                            updateConfig={updateConfig}
+                        />
+                    )}
 
                 {/* Review */}
                 {widget.type ===
                     "review" && (
-                    <ReviewEditor
-                        config={widget.config}
-                        updateConfig={updateConfig}
-                    />
-                )}
+                        <ReviewEditor
+                            config={widget.config}
+                            updateConfig={updateConfig}
+                        />
+                    )}
 
                 {/* Announcement */}
                 {widget.type ===
                     "announcement" && (
-                    <AnnouncementEditor
-                        config={widget.config}
-                        updateConfig={updateConfig}
-                    />
-                )}
+                        <AnnouncementEditor
+                            config={widget.config}
+                            updateConfig={updateConfig}
+                        />
+                    )}
 
                 {/* Appearance */}
                 <AppearanceEditor
@@ -340,27 +340,22 @@ export default function WidgetEditor({
             </div>
 
             {/* Sidebar */}
-            <aside className="flex flex-col sm:flex-row w-full gap-4 space-y-6">
+            <aside className="flex w-full flex-col gap-4 sm:flex-row">
                 {/* Status */}
-                <section className="w-full rounded-xl border bg-card p-5">
+                <section className="flex w-full flex-col rounded-xl border bg-card p-5">
                     <h2 className="font-semibold">
                         Widget status
                     </h2>
 
                     <p className="mt-1 text-sm text-muted-foreground">
-                        Control whether this widget is
-                        displayed on your website.
+                        Control whether this widget is displayed on your website.
                     </p>
 
-                    <div className="mt-5">
+                    <div className="mt-auto pt-5">
                         {status === "active" ? (
                             <button
                                 type="button"
-                                onClick={() =>
-                                    changeStatus(
-                                        "paused"
-                                    )
-                                }
+                                onClick={() => changeStatus("paused")}
                                 disabled={saving}
                                 className="flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium hover:bg-muted disabled:opacity-50"
                             >
@@ -370,11 +365,7 @@ export default function WidgetEditor({
                         ) : (
                             <button
                                 type="button"
-                                onClick={() =>
-                                    changeStatus(
-                                        "active"
-                                    )
-                                }
+                                onClick={() => changeStatus("active")}
                                 disabled={saving}
                                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-foreground px-4 py-2.5 text-sm font-medium text-background hover:opacity-90 disabled:opacity-50"
                             >
@@ -386,7 +377,7 @@ export default function WidgetEditor({
                 </section>
 
                 {/* Delete */}
-                <section className="w-full rounded-xl border border-destructive/20 bg-card p-5">
+                <section className="flex w-full flex-col rounded-xl border border-destructive/20 bg-card p-5">
                     <h2 className="font-semibold">
                         Danger zone
                     </h2>
@@ -395,22 +386,22 @@ export default function WidgetEditor({
                         Permanently delete this widget.
                     </p>
 
-                    <button
-                        type="button"
-                        onClick={deleteWidget}
-                        disabled={deleting}
-                        className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-destructive/30 px-4 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/5 disabled:opacity-50"
-                    >
-                        {deleting ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Trash2 className="h-4 w-4" />
-                        )}
+                    <div className="mt-auto pt-5">
+                        <button
+                            type="button"
+                            onClick={deleteWidget}
+                            disabled={deleting}
+                            className="flex w-full items-center justify-center gap-2 rounded-lg border border-destructive/30 px-4 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/5 disabled:opacity-50"
+                        >
+                            {deleting ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                                <Trash2 className="h-4 w-4" />
+                            )}
 
-                        {deleting
-                            ? "Deleting..."
-                            : "Delete widget"}
-                    </button>
+                            {deleting ? "Deleting..." : "Delete widget"}
+                        </button>
+                    </div>
                 </section>
             </aside>
         </div>
@@ -900,31 +891,27 @@ function AppearanceEditor({
                                             item.value
                                         )
                                     }
-                                    className={`relative h-24 overflow-hidden rounded-xl border-2 transition ${
-                                        active
+                                    className={`relative h-24 overflow-hidden rounded-xl border-2 transition ${active
                                             ? "border-blue-500 bg-blue-50"
                                             : "border-border bg-muted/30 hover:border-muted-foreground/40"
-                                    }`}
+                                        }`}
                                 >
                                     <div className="absolute inset-2 rounded-lg border bg-background">
                                         <div
-                                            className={`absolute h-5 w-12 rounded-md ${
-                                                item.value.includes(
-                                                    "top"
-                                                )
+                                            className={`absolute h-5 w-12 rounded-md ${item.value.includes(
+                                                "top"
+                                            )
                                                     ? "top-2"
                                                     : "bottom-2"
-                                            } ${
-                                                item.value.includes(
+                                                } ${item.value.includes(
                                                     "left"
                                                 )
                                                     ? "left-2"
                                                     : "right-2"
-                                            } ${
-                                                active
+                                                } ${active
                                                     ? "bg-blue-500"
                                                     : "bg-slate-300"
-                                            }`}
+                                                }`}
                                         />
                                     </div>
 

@@ -9,7 +9,7 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-b from-primary/10 via-background to-primary/5">
         <Sidebar />
 
         <DashboardMain>

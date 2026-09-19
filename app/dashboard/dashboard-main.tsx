@@ -13,7 +13,6 @@ export function DashboardMain({
         <main
             className={`
                 min-h-screen
-                bg-white
                 pt-16 sm:pt-0
                 transition-[padding-left]
                 duration-200
