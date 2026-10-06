@@ -102,7 +102,7 @@ export default function Billing() {
           )
         : 0;
 
-    async function handleUpgrade(plan: "plus" | "pro") {
+    async function handleUpgrade(plan: "plus" | "pro" | any) {
         try {
             setLoadingPlan(plan);
 
