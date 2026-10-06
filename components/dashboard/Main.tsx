@@ -232,7 +232,7 @@ export default async function DashboardPage() {
         }));
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/[0.04]">
+        <div className="min-h-screen">
             <div className="space-y-7">
                 {/* Header */}
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">

@@ -1,570 +1,679 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { Star } from "lucide-react";
 
 export default function Home() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    if (!email.trim()) return;
-
-    setLoading(true);
-
-    try {
-      const response = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email.trim(),
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Failed to join waitlist");
-      }
-
-      setSubmitted(true);
-      setEmail("");
-
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong. Please try again.");
-
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
-    <main className="relative h-screen min-h-[680px] w-screen overflow-hidden bg-white text-black">
-
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-
-        <img
-          src="/nudge_proof.avif"
-          alt=""
-          className="
-      absolute
-      left-0
-      lg:-top-36
-      bottom-0
-      block
-      w-full
-      h-auto
-      max-w-none
-      mix-blend-screen
-      animate-landscape-rise
-    "
-        />
-
-        {/* White atmospheric fade */}
-        <div
-          className="
-      absolute
-      inset-x-0
-      top-0
-      h-[45%]
-      bg-gradient-to-b
-      from-white
-      via-white/90
-      via-[55%]
-      to-transparent
-    "
-        />
-
-        {/* Soft white cloud texture */}
-        <div
-          className="
-      absolute
-      inset-x-0
-      top-[8%]
-      h-[35%]
-      opacity-80
-      bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.95)_0%,rgba(255,255,255,0.7)_35%,rgba(255,255,255,0)_72%)]
-      blur-[10px]
-    "
-        />
-
-      </div>  
-
-
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
-
-      <header
-        className="
-    absolute
-    left-0
-    right-0
-    top-0
-    z-30
-
-    flex
-    h-[78px]
-    items-center
-    justify-between
-
-    px-7
-
-    animate-header
-  "
-      >
-
+    <main className="relative min-h-screen overflow-hidden bg-white text-[#171717]">
+      {/* =========================================================
+          FLOATING HERO OBJECTS
+      ========================================================= */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {/* =====================================================
-      BRAND
-  ===================================================== */}
-
-        <a
-          href="/"
-          aria-label="NudgeProof"
+            GREEN HAPPY ORB
+        ===================================================== */}
+        <div
           className="
-      flex
-      items-center
-      gap-2.5
-
-      transition-opacity
-      duration-200
-
-      hover:opacity-70
-    "
+            hero-orb
+            absolute
+            left-[6%]
+            top-[29%]
+            hidden
+            h-[128px]
+            w-[128px]
+            lg:block
+          "
         >
-
-          {/* LOGO IMAGE */}
-
           <div
             className="
-        relative
-        flex
-        h-[28px]
-        w-[28px]
-        shrink-0
-        items-center
-        justify-center
-      "
+              relative
+              h-full
+              w-full
+              rounded-full
+              bg-gradient-to-br
+              from-[#e2ff47]
+              via-[#c4ff1c]
+              to-[#b3eb19]
+              shadow-[0_22px_45px_rgba(170,220,20,0.25)]
+            "
           >
-            <img
-              src="/nudgeproof-logo.svg"
-              alt="NudgeProof"
+            {/* Highlight */}
+            <div
               className="
-          h-full
-          w-full
-          object-contain
-        "
+                absolute
+                inset-0
+                rounded-full
+                bg-[radial-gradient(circle_at_30%_24%,rgba(255,255,255,0.7),transparent_32%)]
+              "
+            />
+
+            {/* Subtle grain */}
+            <div
+              className="
+                absolute
+                inset-0
+                rounded-full
+                opacity-20
+                [background-image:radial-gradient(rgba(255,255,255,0.7)_0.7px,transparent_0.7px)]
+                [background-size:4px_4px]
+              "
+            />
+
+            {/* Left eye */}
+            <span
+              className="
+                absolute
+                left-[42px]
+                top-[41px]
+                h-[8px]
+                w-[15px]
+                rounded-full
+                border-t-[3px]
+                border-[#526c12]
+              "
+            />
+
+            {/* Right eye */}
+            <span
+              className="
+                absolute
+                right-[42px]
+                top-[41px]
+                h-[8px]
+                w-[15px]
+                rounded-full
+                border-t-[3px]
+                border-[#526c12]
+              "
+            />
+
+            {/* Smile */}
+            <span
+              className="
+                absolute
+                left-1/2
+                top-[57px]
+                h-[22px]
+                w-[40px]
+                -translate-x-1/2
+                rounded-b-full
+                border-b-[4px]
+                border-[#526c12]
+              "
             />
           </div>
-
-
-          {/* BRAND NAME */}
-
-          <span
-            className="
-        text-[17px]
-        font-bold
-        tracking-[-0.045em]
-      "
-          >
-            Nudgeproof
-          </span>
-
-        </a>
-
+        </div>
 
         {/* =====================================================
-      SOCIAL LINKS
-  ===================================================== */}
-
-        <nav
-          aria-label="Social media"
+            BLUE FLOATING BUBBLE
+        ===================================================== */}
+        <div
           className="
-      absolute
-      left-1/2
-      top-1/2
-
-      flex
-      -translate-x-1/2
-      -translate-y-1/2
-
-      items-center
-      gap-[2px]
-
-      rounded-full
-      bg-[#f1f1f1]
-
-      px-[6px]
-      py-[5px]
-    "
+            hero-blue-orb
+            absolute
+            right-[43%]
+            top-[18%]
+            h-[46px]
+            w-[46px]
+            rounded-full
+            bg-gradient-to-br
+            from-[#91ddff]
+            to-[#55b9f7]
+            shadow-[0_15px_35px_rgba(65,175,245,0.35)]
+          "
         >
-
-          {/* Instagram */}
-
-          <a
-            href="#"
-            aria-label="Instagram"
-            target="_blank"
-            rel="noopener noreferrer"
+          <div
             className="
-        flex
-        h-[28px]
-        w-[28px]
-        items-center
-        justify-center
-
-        rounded-full
-
-        text-black
-
-        transition-all
-        duration-200
-
-        hover:bg-white
-        hover:-translate-y-[1px]
-      "
-          >
-            <svg
-              viewBox="0 0 24 24"
-              className="h-[15px] w-[15px] fill-none stroke-current"
-              strokeWidth="1.8"
-              aria-hidden="true"
-            >
-              <rect
-                x="3"
-                y="3"
-                width="18"
-                height="18"
-                rx="5"
-              />
-
-              <circle
-                cx="12"
-                cy="12"
-                r="4.2"
-              />
-
-              <circle
-                cx="17.4"
-                cy="6.6"
-                r="1"
-                className="fill-current stroke-none"
-              />
-            </svg>
-          </a>
-
-        </nav>
-
+              absolute
+              inset-[6px]
+              rounded-full
+              bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.55),transparent_45%)]
+            "
+          />
+        </div>
 
         {/* =====================================================
-      CONTACT
-  ===================================================== */}
-
-        <button
-          type="button"
-          onClick={() => {
-            document.getElementById("email")?.focus();
-          }}
+            PINK HAPPY CRESCENT
+        ===================================================== */}
+        <div
           className="
-      rounded-[14px]
-
-      bg-[#ededed]
-
-      px-[17px]
-      py-[10px]
-
-      text-[14px]
-      font-semibold
-      tracking-[-0.02em]
-
-      transition-all
-      duration-200
-
-      hover:-translate-y-0.5
-      hover:bg-[#e5e5e5]
-
-      active:translate-y-0
-    "
+            hero-pink
+            absolute
+            right-[10%]
+            top-[36%]
+            hidden
+            h-[98px]
+            w-[98px]
+            lg:block
+          "
         >
-          Contact
-        </button>
+          <div
+            className="
+              relative
+              h-full
+              w-full
+              overflow-hidden
+              rounded-full
+              bg-gradient-to-br
+              from-[#ff9fd4]
+              via-[#f68fc9]
+              to-[#ffc3a7]
+              shadow-[0_22px_40px_rgba(240,130,190,0.25)]
+            "
+          >
+            {/* White cutout */}
+            <div
+              className="
+                absolute
+                -bottom-1
+                -right-1
+                h-[55px]
+                w-[55px]
+                rounded-tl-full
+                bg-white
+              "
+            />
 
-      </header>
+            {/* Highlight */}
+            <div
+              className="
+                absolute
+                inset-0
+                rounded-full
+                bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.45),transparent_35%)]
+              "
+            />
 
+            {/* Left eye */}
+            <span
+              className="
+                absolute
+                left-[28px]
+                top-[28px]
+                h-[9px]
+                w-[16px]
+                rounded-full
+                border-t-[2.5px]
+                border-[#8b1872]
+              "
+            />
 
-      {/* =====================================================
-          HERO
-      ===================================================== */}
+            {/* Right eye */}
+            <span
+              className="
+                absolute
+                left-[53px]
+                top-[28px]
+                h-[9px]
+                w-[16px]
+                rounded-full
+                border-t-[2.5px]
+                border-[#8b1872]
+              "
+            />
 
-      <section
+            {/* Smile */}
+            <span
+              className="
+                absolute
+                left-[36px]
+                top-[43px]
+                h-[11px]
+                w-[27px]
+                rounded-b-full
+                border-b-[2.5px]
+                border-[#8b1872]
+              "
+            />
+          </div>
+        </div>
+
+        {/* =====================================================
+            GREEN DIAMOND
+        ===================================================== */}
+        <div
+          className="
+            hero-diamond
+            absolute
+            bottom-[17%]
+            left-[28%]
+            hidden
+            h-[42px]
+            w-[42px]
+            rotate-45
+            rounded-[9px]
+            bg-gradient-to-br
+            from-[#76ffa2]
+            to-[#3de982]
+            shadow-[0_15px_30px_rgba(60,235,130,0.3)]
+            lg:block
+          "
+        >
+          <div
+            className="
+              absolute
+              inset-0
+              rounded-[9px]
+              bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.45),transparent_40%)]
+            "
+          />
+        </div>
+
+        {/* =====================================================
+            BLUE / PURPLE HAPPY CRESCENT
+        ===================================================== */}
+        <div
+          className="
+            hero-purple
+            absolute
+            bottom-[7%]
+            right-[18%]
+            hidden
+            h-[118px]
+            w-[118px]
+            lg:block
+          "
+        >
+          <div
+            className="
+              relative
+              h-full
+              w-full
+              rotate-[18deg]
+              overflow-hidden
+              rounded-full
+              bg-gradient-to-br
+              from-[#54c5ff]
+              via-[#699fff]
+              to-[#d76cff]
+              shadow-[0_22px_45px_rgba(90,150,255,0.3)]
+            "
+          >
+            {/* White cutout */}
+            <div
+              className="
+                absolute
+                -right-1
+                -top-1
+                h-[75px]
+                w-[75px]
+                rounded-bl-full
+                bg-white
+              "
+            />
+
+            {/* Highlight */}
+            <div
+              className="
+                absolute
+                inset-0
+                rounded-full
+                bg-[radial-gradient(circle_at_28%_68%,rgba(255,255,255,0.35),transparent_30%)]
+              "
+            />
+
+            {/* Left eye */}
+            <span
+              className="
+                absolute
+                bottom-[43px]
+                left-[30px]
+                h-[9px]
+                w-[18px]
+                rounded-full
+                border-t-[3px]
+                border-[#416b90]
+              "
+            />
+
+            {/* Right eye */}
+            <span
+              className="
+                absolute
+                bottom-[43px]
+                left-[57px]
+                h-[9px]
+                w-[18px]
+                rounded-full
+                border-t-[3px]
+                border-[#416b90]
+              "
+            />
+
+            {/* Smile */}
+            <span
+              className="
+                absolute
+                bottom-[29px]
+                left-[40px]
+                h-[17px]
+                w-[42px]
+                rounded-b-full
+                border-b-[3px]
+                border-[#416b90]
+              "
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* =========================================================
+          HEADER
+      ========================================================= */}
+      <header
         className="
           relative
           z-20
-
-          flex
-          h-full
-          w-full
-          max-w-lg
           mx-auto
-
-          flex-col
+          flex
+          h-[86px]
+          w-full
+          max-w-[1280px]
           items-center
-
+          justify-between
           px-6
-          pt-36
-
-          text-center
+          lg:px-10
         "
       >
-
-        {/* ================= LAUNCH BADGE ================= */}
-
-        <div
+        {/* Logo */}
+        <a
+          href="/"
+          aria-label="NudgeProof home"
           className="
-    animate-fade-up
-    rounded-full
-    bg-[#eeeeee]
-    px-[14px]
-    py-[9px]
-    text-[17px]
-    font-medium
-    leading-none
-    tracking-[-0.025em]
-  "
-          style={{
-            fontFamily: '"Switzer", "Switzer Placeholder", sans-serif',
-          }}
-        >
-          We're Launching Soon
-        </div>
-
-
-        {/* ================= TITLE ================= */}
-
-        <h1
-          className="
-    animate-fade-up-delay-1
-    mt-7
-    whitespace-nowrap
-    text-[clamp(56px,6vw,84px)]
-    font-medium
-    leading-[0.93]
-    tracking-[-0.065em]
-  "
-          style={{
-            fontFamily: '"Instrument Serif", "Instrument Serif Placeholder", serif',
-          }}
-        >
-          Join the Waitlist
-        </h1>
-
-
-        {/* ================= DESCRIPTION ================= */}
-
-        <p
-          className="
-            animate-fade-up-delay-2
-
-            mt-3
-
-            max-w-[530px]
-
-            text-[17px]
-            font-medium
-            leading-[1.35]
-
-            tracking-[-0.025em]
-
-            text-[#888888]
+            flex
+            items-center
+            gap-2.5
+            transition-opacity
+            duration-200
+            hover:opacity-70
           "
         >
-          Join the waitlist to get early access and be the first to
-          <br className="hidden sm:block" />
-          hear when we officially launch.
-        </p>
+          <img
+            src="/nudgeproof-logo.svg"
+            alt="NudgeProof"
+            className="h-8 w-8 object-contain"
+          />
 
-
-        {/* =================================================
-            WAITLIST FORM
-        ================================================= */}
-
-        {!submitted ? (
-          <>
-
-            <form
-              onSubmit={handleSubmit}
-              className="
-                animate-fade-up-delay-3
-
-                mt-7
-
-                flex
-
-                w-[min(480px,calc(100vw-40px))]
-
-                gap-[5px]
-              "
-            >
-
-              {/* EMAIL */}
-
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="me@nudgeproof.com"
-                required
-                className="
-                  h-12
-
-                  min-w-0
-                  flex-1
-
-                  rounded-[13px]
-
-                  border
-                  border-transparent
-
-                  bg-[#eeeeee]
-
-                  px-4
-
-                  text-[15px]
-                  text-black
-
-                  outline-none
-
-                  placeholder:text-[#999999]
-
-                  transition-all
-                  duration-200
-
-                  focus:border-[#d0d0d0]
-                  focus:bg-[#f7f7f7]
-
-                  focus:ring-4
-                  focus:ring-black/[0.035]
-                "
-              />
-
-
-              {/* JOIN */}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="
-                  h-12
-
-                  rounded-[13px]
-
-                  bg-black
-
-                  px-[29px]
-
-                  text-[15px]
-                  font-bold
-                  text-white
-
-                  transition-all
-                  duration-200
-
-                  hover:-translate-y-0.5
-
-                  disabled:cursor-wait
-                  disabled:opacity-50
-                "
-              >
-                {loading ? "Joining..." : "Join"}
-              </button>
-
-            </form>
-
-
-            {/* =================================================
-                SOCIAL PROOF
-            ================================================= */}
-
-            {/* <div
-              className="
-    animate-fade-up-delay-4
-    mt-[22px]
-    text-[14px]
-    tracking-[-0.015em]
-    text-[#777777]
-  "
-            >
-              Joined by <strong className="font-semibold text-black">1,200+</strong> people
-            </div> */}
-
-          </>
-
-        ) : (
-
-          /* =================================================
-             SUCCESS
-          ================================================= */
-
-          <div
+          <span
             className="
-              mt-7
-              animate-success
-              text-center
+              text-[19px]
+              font-bold
+              tracking-[-0.045em]
             "
           >
+            Nudgeproof
+          </span>
+        </a>
 
-            <div
+        {/* Desktop Navigation */}
+        <nav
+          aria-label="Main navigation"
+          className="
+            absolute
+            left-1/2
+            hidden
+            -translate-x-1/2
+            items-center
+            gap-7
+            lg:flex
+          "
+        >
+          <a
+            href="#product"
+            className="text-[14px] font-medium transition-opacity hover:opacity-50"
+          >
+            Product
+          </a>
+
+          <a
+            href="#case-studies"
+            className="text-[14px] font-medium transition-opacity hover:opacity-50"
+          >
+            Case studies
+          </a>
+
+          <a
+            href="#pricing"
+            className="text-[14px] font-medium transition-opacity hover:opacity-50"
+          >
+            Pricing
+          </a>
+
+          <a
+            href="#blog"
+            className="text-[14px] font-medium transition-opacity hover:opacity-50"
+          >
+            Blog
+          </a>
+
+          <a
+            href="#about"
+            className="text-[14px] font-medium transition-opacity hover:opacity-50"
+          >
+            About
+          </a>
+
+          <a
+            href="#contact"
+            className="text-[14px] font-medium transition-opacity hover:opacity-50"
+          >
+            Contact
+          </a>
+        </nav>
+
+        {/* Right actions */}
+        <div className="flex items-center gap-3">
+          <a
+            href="/login"
+            className="
+              hidden
+              rounded-full
+              bg-[#f0efed]
+              px-6
+              py-3
+              text-[14px]
+              font-semibold
+              transition-all
+              duration-200
+              hover:bg-[#e6e5e3]
+              sm:block
+            "
+          >
+            Login
+          </a>
+
+          <a
+            href="/login"
+            className="
+              group
+              flex
+              items-center
+              gap-3
+              text-[14px]
+              font-semibold
+            "
+          >
+            <span
               className="
-                mx-auto
-                mb-[15px]
-
-                grid
-                h-[58px]
-                w-[58px]
-                place-items-center
-
+                flex
+                h-9
+                w-9
+                items-center
+                justify-center
                 rounded-full
-
-                bg-[#eeeeee]
-
-                text-[25px]
-                text-green-500
+                bg-[#171717]
+                text-white
+                transition-transform
+                duration-300
+                group-hover:translate-x-0.5
               "
             >
-              ✓
-            </div>
+              →
+            </span>
 
+            <span className="hidden sm:block">
+              Try for free
+            </span>
+          </a>
+        </div>
+      </header>
 
-            <h2
-              className="
-                font-serif
-
-                text-[40px]
-                font-medium
-
-                tracking-[-0.05em]
-              "
-            >
-              You're on the list.
-            </h2>
-
-
-            <p className="text-[15px] text-[#888888]">
-              We'll let you know when we officially launch.
-            </p>
-
+      {/* =========================================================
+          HERO
+      ========================================================= */}
+      <section
+        className="
+          relative
+          z-10
+          mx-auto
+          flex
+          min-h-[calc(100vh-86px)]
+          w-full
+          max-w-[1280px]
+          flex-col
+          items-center
+          px-6
+          pt-[110px]
+          text-center
+          sm:pt-[125px]
+          lg:pt-[145px]
+        "
+      >
+        {/* Reviews */}
+        <div
+          className="
+            hero-content-1
+            flex
+            items-center
+            gap-2
+            text-[14px]
+            text-[#5d5d5d]
+          "
+        >
+          <div className="flex items-center gap-[2px]">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <Star
+                key={index}
+                className="h-[15px] w-[15px] fill-[#555] text-[#555]"
+                strokeWidth={1.5}
+              />
+            ))}
           </div>
 
-        )}
+          <span>1200+ Reviews</span>
+        </div>
 
+        {/* Main heading */}
+        <h1
+          className="
+            hero-content-2
+            mt-8
+            max-w-[950px]
+            text-[clamp(54px,7vw,92px)]
+            font-medium
+            leading-[0.94]
+            tracking-[-0.065em]
+          "
+        >
+          Turn visitors into
+          <br />
+          <span className="relative inline-block">
+            customers
+          </span>
+        </h1>
+
+        {/* Description */}
+        <p
+          className="
+            hero-content-3
+            mt-7
+            max-w-[610px]
+            text-[17px]
+            font-medium
+            leading-[1.45]
+            tracking-[-0.025em]
+            text-[#777]
+            sm:text-[18px]
+          "
+        >
+          Build trust instantly with social proof that makes
+          <br className="hidden sm:block" />
+          your website feel active, trusted, and alive.
+        </p>
+
+        {/* CTA */}
+        <div
+          className="
+            hero-content-4
+            mt-9
+            flex
+            items-center
+            gap-3
+          "
+        >
+          {/* Primary */}
+          <a
+            href="/login"
+            className="
+              group
+              flex
+              items-center
+              gap-3
+              rounded-full
+              bg-[#171717]
+              py-2
+              pl-6
+              pr-2
+              text-[14px]
+              font-semibold
+              text-white
+              transition-all
+              duration-300
+              hover:-translate-y-0.5
+              hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)]
+            "
+          >
+            <span>Try for free</span>
+
+            <span
+              className="
+                flex
+                h-9
+                w-9
+                items-center
+                justify-center
+                rounded-full
+                bg-white
+                text-black
+                transition-transform
+                duration-300
+                group-hover:translate-x-0.5
+              "
+            >
+              →
+            </span>
+          </a>
+
+          {/* Secondary */}
+          <a
+            href="mailto:hello@nudgeproof.com"
+            className="
+              rounded-full
+              bg-[#eeeeec]
+              px-7
+              py-3.5
+              text-[14px]
+              font-semibold
+              transition-all
+              duration-300
+              hover:-translate-y-0.5
+              hover:bg-[#e5e4e2]
+            "
+          >
+            Contact us
+          </a>
+        </div>
       </section>
-
     </main>
   );
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { redis } from "@/lib/redis/server";
-import { corsJson, corsOptions } from "@/lib/cors";
+import { corsOptions } from "@/lib/cors";
 
 type Props = {
     params: Promise<{
@@ -10,7 +10,6 @@ type Props = {
 };
 
 const VISITOR_TTL_SECONDS = 60;
-
 const MAX_VISITOR_ID_LENGTH = 100;
 
 export async function POST(
@@ -76,8 +75,7 @@ export async function POST(
         if (!visitorId) {
             return NextResponse.json(
                 {
-                    error:
-                        "visitor_id is required",
+                    error: "visitor_id is required",
                 },
                 {
                     status: 400,
@@ -91,8 +89,7 @@ export async function POST(
         ) {
             return NextResponse.json(
                 {
-                    error:
-                        "Invalid visitor_id",
+                    error: "Invalid visitor_id",
                 },
                 {
                     status: 400,
@@ -115,8 +112,7 @@ export async function POST(
         ) {
             return NextResponse.json(
                 {
-                    error:
-                        "Invalid visitor_id",
+                    error: "Invalid visitor_id",
                 },
                 {
                     status: 400,
@@ -126,15 +122,22 @@ export async function POST(
 
         /*
          * --------------------------------------------------------
-         * Verify website
+         * Supabase
          * --------------------------------------------------------
          *
-         * We use the admin client because this is a public
-         * embed endpoint and there is no Supabase user session.
+         * This is a public embed endpoint, so there is no
+         * Supabase user session. We use the admin client to
+         * verify the website.
          */
 
         const supabase =
             createAdminClient();
+
+        /*
+         * --------------------------------------------------------
+         * 1. Verify website
+         * --------------------------------------------------------
+         */
 
         const {
             data: website,
@@ -142,12 +145,14 @@ export async function POST(
         } = await supabase
             .from("websites")
             .select(
-                "id, site_key, status"
+                `
+                id,
+                account_id,
+                site_key,
+                status
+                `
             )
-            .eq(
-                "site_key",
-                siteKey
-            )
+            .eq("site_key", siteKey)
             .single();
 
         if (
@@ -156,8 +161,7 @@ export async function POST(
         ) {
             return NextResponse.json(
                 {
-                    error:
-                        "Website not found",
+                    error: "Website not found",
                 },
                 {
                     status: 404,
@@ -166,7 +170,9 @@ export async function POST(
         }
 
         /*
-         * Inactive websites should not register visitors.
+         * --------------------------------------------------------
+         * 2. Verify website is active
+         * --------------------------------------------------------
          */
 
         if (
@@ -175,8 +181,30 @@ export async function POST(
         ) {
             return NextResponse.json(
                 {
-                    error:
-                        "Website is inactive",
+                    error: "Website is inactive",
+                },
+                {
+                    status: 403,
+                }
+            );
+        }
+
+        /*
+         * --------------------------------------------------------
+         * 3. Verify account exists
+         * --------------------------------------------------------
+         *
+         * We don't need to check the subscription or
+         * impression usage here.
+         *
+         * Visitor tracking is independent from the
+         * widget impression quota.
+         */
+
+        if (!website.account_id) {
+            return NextResponse.json(
+                {
+                    error: "Website account not found",
                 },
                 {
                     status: 403,
@@ -204,7 +232,9 @@ export async function POST(
             Date.now();
 
         /*
-         * Add/update visitor timestamp.
+         * --------------------------------------------------------
+         * 4. Add/update visitor timestamp
+         * --------------------------------------------------------
          */
 
         await redis.zadd(
@@ -216,8 +246,9 @@ export async function POST(
         );
 
         /*
-         * Remove visitors whose last heartbeat
-         * is older than the TTL.
+         * --------------------------------------------------------
+         * 5. Remove stale visitors
+         * --------------------------------------------------------
          */
 
         const cutoff =
@@ -232,11 +263,13 @@ export async function POST(
         );
 
         /*
-         * Keep the Redis key from living forever
-         * if traffic disappears completely.
+         * --------------------------------------------------------
+         * 6. Keep Redis key alive
+         * --------------------------------------------------------
          *
-         * This does NOT remove individual visitors;
-         * the score cleanup above handles those.
+         * The key itself expires slightly after the visitor
+         * TTL. Individual visitors are removed using their
+         * heartbeat timestamp above.
          */
 
         await redis.expire(
@@ -245,7 +278,9 @@ export async function POST(
         );
 
         /*
-         * Get current active visitor count.
+         * --------------------------------------------------------
+         * 7. Get current active visitor count
+         * --------------------------------------------------------
          */
 
         const count =
@@ -255,7 +290,7 @@ export async function POST(
 
         /*
          * --------------------------------------------------------
-         * CORS
+         * 8. Response
          * --------------------------------------------------------
          */
 
