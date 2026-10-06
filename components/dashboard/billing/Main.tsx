@@ -57,49 +57,95 @@ export default function Billing() {
     const [plans, setPlans] = useState<Plan[]>([]);
     const [plansLoading, setPlansLoading] = useState(true);
 
-    // Temporary until account_subscriptions is connected.
-    const [currentPlan] = useState<Plan["slug"]>("free");
+    const [currentPlan, setCurrentPlan] =
+        useState<Plan["slug"]>("free");
 
-    // Temporary until account_usage is connected.
-    const impressionsUsed = 0;
+    const [impressionsUsed, setImpressionsUsed] =
+        useState(0);
+
+    const [usageLoading, setUsageLoading] =
+        useState(true);
 
     useEffect(() => {
-        async function loadPlans() {
-            try {
-                const response = await fetch("/api/billing/plans", {
+
+        loadPlans();
+        loadUsage();
+    }, []);
+
+    async function loadPlans() {
+        try {
+            const response = await fetch("/api/billing/plans", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                cache: "no-store",
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error || "Failed to load billing plans"
+                );
+            }
+
+            setPlans(data.plans ?? []);
+        } catch (error) {
+            console.error("Failed to load billing plans:", error);
+        } finally {
+            setPlansLoading(false);
+        }
+    }
+
+    async function loadUsage() {
+        try {
+            setUsageLoading(true);
+
+            const response = await fetch(
+                "/api/billing/usage",
+                {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     cache: "no-store",
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(
-                        data.error || "Failed to load billing plans"
-                    );
                 }
+            );
 
-                setPlans(data.plans ?? []);
-            } catch (error) {
-                console.error("Failed to load billing plans:", error);
-            } finally {
-                setPlansLoading(false);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error ||
+                    "Failed to load billing usage"
+                );
             }
-        }
 
-        loadPlans();
-    }, []);
+            setCurrentPlan(
+                data.plan?.slug ?? "free"
+            );
+
+            setImpressionsUsed(
+                data.usage?.impressions ?? 0
+            );
+        } catch (error) {
+            console.error(
+                "Failed to load billing usage:",
+                error
+            );
+        } finally {
+            setUsageLoading(false);
+        }
+    }
 
     const current = plans.find((plan) => plan.slug === currentPlan);
 
     const usagePercentage = current
         ? Math.min(
-              (impressionsUsed / current.max_impressions) * 100,
-              100
-          )
+            (impressionsUsed / current.max_impressions) * 100,
+            100
+        )
         : 0;
 
     async function handleUpgrade(plan: "plus" | "pro" | any) {
@@ -257,7 +303,9 @@ export default function Billing() {
                                 <div className="flex items-end justify-between gap-3">
                                     <div>
                                         <span className="text-[23px] font-semibold tracking-[-0.035em]">
-                                            {impressionsUsed.toLocaleString()}
+                                            {usageLoading
+                                                ? "—"
+                                                : impressionsUsed.toLocaleString()}
                                         </span>
 
                                         <span className="ml-1 text-[12px] text-muted-foreground">
@@ -393,11 +441,10 @@ export default function Billing() {
                             return (
                                 <div
                                     key={plan.id}
-                                    className={`relative flex flex-col overflow-hidden rounded-2xl border bg-background/80 shadow-sm backdrop-blur transition-all ${
-                                        plan.slug === "plus"
-                                            ? "border-primary/40 shadow-primary/5"
-                                            : "border-border/60"
-                                    }`}
+                                    className={`relative flex flex-col overflow-hidden rounded-2xl border bg-background/80 shadow-sm backdrop-blur transition-all ${plan.slug === "plus"
+                                        ? "border-primary/40 shadow-primary/5"
+                                        : "border-border/60"
+                                        }`}
                                 >
                                     {/* Popular */}
                                     {plan.slug === "plus" && (
@@ -419,8 +466,8 @@ export default function Billing() {
                                             {plan.slug === "free"
                                                 ? "Everything you need to get started with social proof."
                                                 : plan.slug === "plus"
-                                                  ? "More impressions and longer analytics for growing websites."
-                                                  : "Higher limits and advanced support for serious growth."}
+                                                    ? "More impressions and longer analytics for growing websites."
+                                                    : "Higher limits and advanced support for serious growth."}
                                         </p>
 
                                         <div className="mt-5 flex items-baseline gap-1">
@@ -449,13 +496,12 @@ export default function Billing() {
                                                     );
                                                 }
                                             }}
-                                            className={`mt-5 flex h-10 w-full items-center justify-center gap-2 rounded-xl text-[12px] font-semibold transition-all ${
-                                                isCurrent
-                                                    ? "cursor-default bg-muted text-muted-foreground"
-                                                    : plan.slug === "plus"
-                                                      ? "bg-primary text-primary-foreground shadow-sm hover:-translate-y-0.5 hover:shadow-md"
-                                                      : "border border-border/70 bg-background hover:bg-muted"
-                                            }`}
+                                            className={`mt-5 flex h-10 w-full items-center justify-center gap-2 rounded-xl text-[12px] font-semibold transition-all ${isCurrent
+                                                ? "cursor-default bg-muted text-muted-foreground"
+                                                : plan.slug === "plus"
+                                                    ? "bg-primary text-primary-foreground shadow-sm hover:-translate-y-0.5 hover:shadow-md"
+                                                    : "border border-border/70 bg-background hover:bg-muted"
+                                                }`}
                                         >
                                             {loadingPlan === plan.slug ? (
                                                 <>
