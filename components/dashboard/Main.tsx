@@ -240,12 +240,12 @@ export default async function DashboardPage() {
                         <div className="mb-2.5 flex items-center gap-2">
                             <span className="size-1.5 rounded-full bg-primary" />
 
-                            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                            <span className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                                 Overview
                             </span>
                         </div>
 
-                        <h1 className="text-[28px] font-semibold leading-none tracking-[-0.035em] sm:text-[30px]">
+                        <h1 className="text-[32px] font-semibold leading-none tracking-[-0.035em] sm:text-[34px]">
                             Good to see you, {name}
                         </h1>
 
@@ -257,7 +257,7 @@ export default async function DashboardPage() {
 
                     <Link
                         href="/dashboard/websites/new"
-                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-xs font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
                     >
                         <Plus className="size-3.5" />
                         Add website
@@ -326,14 +326,14 @@ export default async function DashboardPage() {
                                     Recent activity
                                 </h2>
 
-                                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                                <p className="mt-0.5 text-[13px] text-muted-foreground">
                                     Latest events received from your websites.
                                 </p>
                             </div>
 
                             <Link
                                 href="/dashboard/events"
-                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline"
+                                className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:underline"
                             >
                                 View all
                                 <ArrowRight className="size-3" />
@@ -350,14 +350,14 @@ export default async function DashboardPage() {
                                     No activity yet
                                 </h3>
 
-                                <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground">
+                                <p className="mt-1 max-w-sm text-sm leading-5 text-muted-foreground">
                                     Once your website starts sending
                                     events, you'll see them here.
                                 </p>
 
                                 <Link
                                     href="/dashboard/integrations"
-                                    className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                                    className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
                                 >
                                     Configure integration
                                     <ArrowRight className="size-3" />
@@ -385,31 +385,31 @@ export default async function DashboardPage() {
 
                                                 <div className="min-w-0 flex-1">
                                                     <div className="flex items-center gap-2">
-                                                        <p className="text-xs font-semibold">
+                                                        <p className="text-sm font-semibold">
                                                             {formatEventType(
                                                                 event.type
                                                             )}
                                                         </p>
 
-                                                        <span className="text-[10px] text-muted-foreground">
+                                                        <span className="text-sm text-muted-foreground">
                                                             •
                                                         </span>
 
-                                                        <p className="truncate text-[11px] text-muted-foreground">
+                                                        <p className="truncate text-[13px] text-muted-foreground">
                                                             {
                                                                 event.websiteName
                                                             }
                                                         </p>
                                                     </div>
 
-                                                    <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
+                                                    <p className="mt-0.5 truncate text-[13px] text-muted-foreground">
                                                         {formatEventData(
                                                             event.data
                                                         )}
                                                     </p>
                                                 </div>
 
-                                                <span className="shrink-0 text-[10px] text-muted-foreground">
+                                                <span className="shrink-0 text-sm text-muted-foreground">
                                                     {formatRelativeTime(
                                                         event.created_at
                                                     )}
@@ -430,14 +430,14 @@ export default async function DashboardPage() {
                                     Your websites
                                 </h2>
 
-                                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                                <p className="mt-0.5 text-[13px] text-muted-foreground">
                                     Activity across your websites.
                                 </p>
                             </div>
 
                             <Link
                                 href="/dashboard/websites"
-                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline"
+                                className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:underline"
                             >
                                 Manage
                                 <ArrowRight className="size-3" />
@@ -454,14 +454,14 @@ export default async function DashboardPage() {
                                     No websites yet
                                 </h3>
 
-                                <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground">
+                                <p className="mt-1 max-w-sm text-sm leading-5 text-muted-foreground">
                                     Connect your first website to start
                                     using NudgeProof.
                                 </p>
 
                                 <Link
                                     href="/dashboard/websites/new"
-                                    className="mt-4 inline-flex h-9 items-center gap-2 rounded-xl bg-primary px-4 text-xs font-semibold text-primary-foreground transition hover:opacity-90"
+                                    className="mt-4 inline-flex h-9 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
                                 >
                                     <Plus className="size-3.5" />
                                     Add website
@@ -489,7 +489,7 @@ export default async function DashboardPage() {
 
                                                     <div className="min-w-0 flex-1">
                                                         <div className="flex items-center gap-2">
-                                                            <p className="truncate text-xs font-semibold">
+                                                            <p className="truncate text-sm font-semibold">
                                                                 {
                                                                     website.name
                                                                 }
@@ -505,7 +505,7 @@ export default async function DashboardPage() {
                                                             />
                                                         </div>
 
-                                                        <p className="mt-0.5 truncate text-[10px] text-muted-foreground">
+                                                        <p className="mt-0.5 truncate text-sm text-muted-foreground">
                                                             {
                                                                 website.url
                                                             }
@@ -513,19 +513,19 @@ export default async function DashboardPage() {
                                                     </div>
 
                                                     <div className="text-right">
-                                                        <p className="text-xs font-semibold">
+                                                        <p className="text-sm font-semibold">
                                                             {
                                                                 website.count
                                                             }
                                                         </p>
 
-                                                        <p className="text-[9px] text-muted-foreground">
+                                                        <p className="text-sm text-muted-foreground">
                                                             events
                                                         </p>
                                                     </div>
                                                 </div>
 
-                                                <div className="mt-3 flex items-center gap-4 pl-12 text-[10px] text-muted-foreground">
+                                                <div className="mt-3 flex items-center gap-4 pl-12 text-sm text-muted-foreground">
                                                     <span>
                                                         {
                                                             website.activeWidgetCount
@@ -555,7 +555,7 @@ export default async function DashboardPage() {
                             Quick actions
                         </h2>
 
-                        <p className="mt-0.5 text-[11px] text-muted-foreground">
+                        <p className="mt-0.5 text-[13px] text-muted-foreground">
                             Manage your NudgeProof setup.
                         </p>
                     </div>
@@ -607,7 +607,7 @@ function StatCard({
                 </div>
             </div>
 
-            <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+            <p className="mt-4 text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                 {title}
             </p>
 
@@ -615,7 +615,7 @@ function StatCard({
                 {value.toLocaleString()}
             </p>
 
-            <p className="mt-1 text-[11px] text-muted-foreground">
+            <p className="mt-1 text-[13px] text-muted-foreground">
                 {description}
             </p>
         </div>
@@ -638,7 +638,7 @@ function SmallStat({
             </div>
 
             <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                <p className="text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                     {title}
                 </p>
 
@@ -671,11 +671,11 @@ function QuickAction({
             </div>
 
             <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold">
+                <p className="text-sm font-semibold">
                     {title}
                 </p>
 
-                <p className="mt-0.5 text-[10px] text-muted-foreground">
+                <p className="mt-0.5 text-sm text-muted-foreground">
                     {description}
                 </p>
             </div>

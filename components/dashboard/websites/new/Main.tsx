@@ -75,7 +75,7 @@ export default function NewWebsite() {
                         inline-flex
                         items-center
                         gap-2
-                        text-xs
+                        text-sm
                         font-medium
                         text-muted-foreground
                         transition-colors
@@ -103,7 +103,7 @@ export default function NewWebsite() {
 
                         <span
                             className="
-                                text-[9px]
+                                text-sm
                                 font-semibold
                                 uppercase
                                 tracking-[0.16em]
@@ -118,7 +118,7 @@ export default function NewWebsite() {
                         <div>
                             <h1
                                 className="
-                                    text-[30px]
+                                    text-[34px]
                                     font-semibold
                                     leading-none
                                     tracking-[-0.04em]
@@ -152,7 +152,7 @@ export default function NewWebsite() {
                                 bg-white/70
                                 px-3
                                 py-2
-                                text-[10px]
+                                text-sm
                                 font-medium
                                 text-muted-foreground
                                 sm:flex
@@ -211,7 +211,7 @@ export default function NewWebsite() {
                                     Website details
                                 </h2>
 
-                                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                                <p className="mt-0.5 text-[13px] text-muted-foreground">
                                     Enter the details for the website
                                     you want to connect.
                                 </p>
@@ -235,7 +235,7 @@ export default function NewWebsite() {
                                     htmlFor="name"
                                     className="
                                         block
-                                        text-xs
+                                        text-sm
                                         font-semibold
                                         tracking-tight
                                     "
@@ -278,7 +278,7 @@ export default function NewWebsite() {
                                     "
                                 />
 
-                                <p className="text-[10px] leading-4 text-muted-foreground">
+                                <p className="text-sm leading-4 text-muted-foreground">
                                     A name to help you identify this
                                     website inside NudgeProof.
                                 </p>
@@ -293,7 +293,7 @@ export default function NewWebsite() {
                                     htmlFor="url"
                                     className="
                                         block
-                                        text-xs
+                                        text-sm
                                         font-semibold
                                         tracking-tight
                                     "
@@ -351,7 +351,7 @@ export default function NewWebsite() {
                                     />
                                 </div>
 
-                                <p className="text-[10px] leading-4 text-muted-foreground">
+                                <p className="text-sm leading-4 text-muted-foreground">
                                     Enter the full URL of the website
                                     where NudgeProof will be installed.
                                 </p>
@@ -391,11 +391,11 @@ export default function NewWebsite() {
                                 </div>
 
                                 <div className="min-w-0 flex-1">
-                                    <p className="text-[10px] font-semibold">
+                                    <p className="text-sm font-semibold">
                                         Ready to connect
                                     </p>
 
-                                    <p className="mt-0.5 text-[9px] leading-4 text-muted-foreground">
+                                    <p className="mt-0.5 text-sm leading-4 text-muted-foreground">
                                         After adding your website,
                                         you'll receive a unique Site ID
                                         and installation snippet.
@@ -418,7 +418,7 @@ export default function NewWebsite() {
                                         bg-destructive/[0.05]
                                         px-3.5
                                         py-3
-                                        text-xs
+                                        text-sm
                                         text-destructive
                                     "
                                 >
@@ -445,7 +445,7 @@ export default function NewWebsite() {
                                 sm:justify-between
                             "
                         >
-                            <p className="text-[10px] text-muted-foreground">
+                            <p className="text-sm text-muted-foreground">
                                 You can configure widgets after
                                 connecting your website.
                             </p>
@@ -462,7 +462,7 @@ export default function NewWebsite() {
                                         border
                                         border-border/70
                                         px-4
-                                        text-xs
+                                        text-sm
                                         font-medium
                                         transition
                                         hover:bg-muted/60
@@ -482,7 +482,7 @@ export default function NewWebsite() {
                                         rounded-xl
                                         bg-primary
                                         px-4
-                                        text-xs
+                                        text-sm
                                         font-semibold
                                         text-primary-foreground
                                         shadow-[0_4px_14px_rgba(0,127,255,0.16)]

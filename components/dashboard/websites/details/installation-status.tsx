@@ -168,7 +168,7 @@ export function InstallationStatus({
               </p>
 
               {checkedAt && !loading && (
-                <p className="mt-2 text-xs text-muted-foreground/70">
+                <p className="mt-2 text-sm text-muted-foreground/70">
                   Last checked{" "}
                   {formatDate(checkedAt)}
                 </p>
@@ -186,7 +186,7 @@ export function InstallationStatus({
                 inline-flex h-9 shrink-0
                 items-center justify-center gap-2
                 rounded-lg bg-[var(--brand-blue)]
-                px-3.5 text-xs font-semibold
+                px-3.5 text-sm font-semibold
                 text-white
                 shadow-[0_3px_10px_rgba(0,127,255,0.15)]
                 transition-all
@@ -227,7 +227,7 @@ function StatusPill({
 }) {
   if (status === "installed") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/15 bg-emerald-500/[0.06] px-2 py-0.5 text-[10px] font-medium text-emerald-600">
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/15 bg-emerald-500/[0.06] px-2 py-0.5 text-sm font-medium text-emerald-600">
         <span className="size-1.5 rounded-full bg-emerald-500" />
         Verified
       </span>
@@ -236,7 +236,7 @@ function StatusPill({
 
   if (status === "failed") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/15 bg-red-500/[0.06] px-2 py-0.5 text-[10px] font-medium text-red-600">
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/15 bg-red-500/[0.06] px-2 py-0.5 text-sm font-medium text-red-600">
         <span className="size-1.5 rounded-full bg-red-500" />
         Not found
       </span>
@@ -244,7 +244,7 @@ function StatusPill({
   }
 
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/15 bg-amber-500/[0.06] px-2 py-0.5 text-[10px] font-medium text-amber-600">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/15 bg-amber-500/[0.06] px-2 py-0.5 text-sm font-medium text-amber-600">
       <span className="size-1.5 rounded-full bg-amber-500" />
       Pending
     </span>

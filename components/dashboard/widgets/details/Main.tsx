@@ -71,7 +71,7 @@ export default async function WidgetDetails({ id }: Props) {
                 {/* Back */}
                 <Link
                     href="/dashboard/widgets"
-                    className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
                     <ArrowLeft className="size-3.5" />
                     Back to widgets
@@ -84,18 +84,18 @@ export default async function WidgetDetails({ id }: Props) {
                             <div className="mb-3 flex items-center gap-2">
                                 <span className="size-1.5 rounded-full bg-primary" />
 
-                                <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                                <span className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                                     Widget
                                 </span>
                             </div>
 
                             <div className="flex flex-wrap items-center gap-3">
-                                <h1 className="text-[28px] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[30px]">
+                                <h1 className="text-[32px] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[34px]">
                                     {widget.name}
                                 </h1>
 
                                 <span
-                                    className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide ${
+                                    className={`rounded-full px-2.5 py-1 text-sm font-semibold uppercase tracking-wide ${
                                         widget.status === "active"
                                             ? "bg-green-500/10 text-green-600"
                                             : widget.status === "paused"
@@ -139,10 +139,10 @@ export default async function WidgetDetails({ id }: Props) {
                             </div>
 
                             <div>
-                                <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                                <p className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
                                     Widget type
                                 </p>
-                                <p className="text-xs font-semibold text-foreground">
+                                <p className="text-sm font-semibold text-foreground">
                                     {getWidgetTypeLabel(widget.type)}
                                 </p>
                             </div>

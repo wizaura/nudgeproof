@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
                 plan,
             },
 
-            return_url: `${appUrl}/dashboard/settings/billing`,
+            return_url: `${appUrl.replace(/\/+$/, "")}/dashboard/billing/success?plan=${plan}`,
         });
 
         if (!session.checkout_url) {

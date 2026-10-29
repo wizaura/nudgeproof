@@ -114,7 +114,7 @@ export default async function Websites() {
                                                     <ExternalLink className="size-3 shrink-0 text-muted-foreground/60" />
                                                 </div>
 
-                                                <p className="mt-0.5 truncate text-[10px] text-muted-foreground">
+                                                <p className="mt-0.5 truncate text-sm text-muted-foreground">
                                                     Production · NudgeProof
                                                 </p>
                                             </div>
@@ -144,11 +144,11 @@ export default async function Websites() {
                                         "
                                     >
                                         <div className="min-w-0">
-                                            <p className="text-[8px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                                            <p className="text-sm font-medium uppercase tracking-[0.12em] text-muted-foreground">
                                                 Site key
                                             </p>
 
-                                            <p className="mt-0.5 truncate font-mono text-[10px] text-foreground/70">
+                                            <p className="mt-0.5 truncate font-mono text-sm text-foreground/70">
                                                 {website.site_key}
                                             </p>
                                         </div>
@@ -170,7 +170,7 @@ export default async function Websites() {
                                             py-2.5
                                         "
                                     >
-                                        <p className="text-[8px] font-medium text-muted-foreground">
+                                        <p className="text-sm font-medium text-muted-foreground">
                                             Nudges
                                         </p>
 
@@ -178,7 +178,7 @@ export default async function Websites() {
                                             —
                                         </p>
 
-                                        <p className="mt-0.5 text-[8px] text-muted-foreground">
+                                        <p className="mt-0.5 text-sm text-muted-foreground">
                                             No data yet
                                         </p>
                                     </div>
@@ -193,7 +193,7 @@ export default async function Websites() {
                                             py-2.5
                                         "
                                     >
-                                        <p className="text-[8px] font-medium text-muted-foreground">
+                                        <p className="text-sm font-medium text-muted-foreground">
                                             Conv. Rate
                                         </p>
 
@@ -201,7 +201,7 @@ export default async function Websites() {
                                             —
                                         </p>
 
-                                        <p className="mt-0.5 text-[8px] text-muted-foreground">
+                                        <p className="mt-0.5 text-sm text-muted-foreground">
                                             No data yet
                                         </p>
                                     </div>
@@ -216,7 +216,7 @@ export default async function Websites() {
                                             py-2.5
                                         "
                                     >
-                                        <p className="text-[8px] font-medium text-muted-foreground">
+                                        <p className="text-sm font-medium text-muted-foreground">
                                             Latency
                                         </p>
 
@@ -224,7 +224,7 @@ export default async function Websites() {
                                             —
                                         </p>
 
-                                        <p className="mt-0.5 text-[8px] text-muted-foreground">
+                                        <p className="mt-0.5 text-sm text-muted-foreground">
                                             No data yet
                                         </p>
                                     </div>
@@ -263,11 +263,11 @@ export default async function Websites() {
                                         </div>
 
                                         <div className="min-w-0 flex-1">
-                                            <p className="truncate text-[10px] font-medium">
+                                            <p className="truncate text-sm font-medium">
                                                 NudgeProof Widget
                                             </p>
 
-                                            <p className="mt-0.5 text-[8px] text-muted-foreground">
+                                            <p className="mt-0.5 text-sm text-muted-foreground">
                                                 Ready to configure
                                             </p>
                                         </div>
@@ -298,7 +298,7 @@ export default async function Websites() {
                                                 border-border/60
                                                 px-2.5
                                                 py-1.5
-                                                text-[9px]
+                                                text-sm
                                                 font-medium
                                                 text-muted-foreground
                                                 transition-colors
@@ -320,7 +320,7 @@ export default async function Websites() {
                                                 border-border/60
                                                 px-2.5
                                                 py-1.5
-                                                text-[9px]
+                                                text-sm
                                                 font-medium
                                                 text-muted-foreground
                                                 transition-colors

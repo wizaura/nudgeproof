@@ -59,6 +59,17 @@ export default function Billing() {
 
     const [currentPlan, setCurrentPlan] =
         useState<Plan["slug"]>("free");
+    const [subscriptionStatus, setSubscriptionStatus] =
+        useState<string | null>(null);
+    const [currentPeriodEnd, setCurrentPeriodEnd] =
+        useState<string | null>(null);
+    const [cancelAtPeriodEnd, setCancelAtPeriodEnd] =
+        useState(false);
+    const [scheduledPlan, setScheduledPlan] = useState<string | null>(null);
+    const [subscriptionDetailsLoading, setSubscriptionDetailsLoading] =
+        useState(true);
+    const [cancelLoading, setCancelLoading] = useState(false);
+    const [cancelError, setCancelError] = useState<string | null>(null);
 
     const [impressionsUsed, setImpressionsUsed] =
         useState(0);
@@ -125,6 +136,25 @@ export default function Billing() {
             setCurrentPlan(
                 data.plan?.slug ?? "free"
             );
+            setSubscriptionStatus(data.subscription?.status ?? null);
+            setCurrentPeriodEnd(data.subscription?.current_period_end ?? null);
+
+            if (data.plan?.slug !== "free" && data.subscription?.status === "active") {
+                const subscriptionResponse = await fetch("/api/billing/subscription", {
+                    method: "GET",
+                    cache: "no-store",
+                });
+                const subscriptionData = await subscriptionResponse.json();
+                if (!subscriptionResponse.ok) {
+                    throw new Error(subscriptionData.error || "Failed to load subscription details");
+                }
+                setCancelAtPeriodEnd(Boolean(subscriptionData.cancelAtPeriodEnd));
+                setCurrentPeriodEnd(subscriptionData.currentPeriodEnd ?? data.subscription?.current_period_end ?? null);
+                setScheduledPlan(subscriptionData.scheduledPlan ?? null);
+            } else {
+                setCancelAtPeriodEnd(false);
+                setScheduledPlan(null);
+            }
 
             setImpressionsUsed(
                 data.usage?.impressions ?? 0
@@ -135,7 +165,41 @@ export default function Billing() {
                 error
             );
         } finally {
+            setSubscriptionDetailsLoading(false);
             setUsageLoading(false);
+        }
+    }
+
+    async function handleCancelSubscription() {
+        const periodEnd = currentPeriodEnd
+            ? new Date(currentPeriodEnd).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+              })
+            : "the end of your current billing period";
+
+        if (!window.confirm(`Cancel your subscription? Your paid access will continue through ${periodEnd}.`)) {
+            return;
+        }
+
+        setCancelLoading(true);
+        setCancelError(null);
+        try {
+            const response = await fetch("/api/billing/subscription", {
+                method: "POST",
+                cache: "no-store",
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || "Unable to cancel subscription");
+            }
+            setCancelAtPeriodEnd(Boolean(data.cancelAtPeriodEnd));
+            setCurrentPeriodEnd(data.currentPeriodEnd ?? currentPeriodEnd);
+        } catch (error) {
+            setCancelError(error instanceof Error ? error.message : "Unable to cancel subscription");
+        } finally {
+            setCancelLoading(false);
         }
     }
 
@@ -148,9 +212,47 @@ export default function Billing() {
         )
         : 0;
 
-    async function handleUpgrade(plan: "plus" | "pro" | any) {
+    async function handlePlanChange(plan: Plan["slug"]) {
         try {
             setLoadingPlan(plan);
+
+            if (plan === "free") {
+                await handleCancelSubscription();
+                return;
+            }
+
+            if (currentPlan !== "free") {
+                const isDowngrade = plan === "plus" && currentPlan === "pro";
+                const periodEnd = currentPeriodEnd
+                    ? new Date(currentPeriodEnd).toLocaleDateString()
+                    : "your next billing date";
+                const message = isDowngrade
+                    ? `Downgrade to ${plan === "plus" ? "Plus" : "Pro"} at ${periodEnd}? Your current plan stays active until then.`
+                    : `Upgrade to ${plan === "plus" ? "Plus" : "Pro"} now? The change may be prorated for the remainder of this billing period.`;
+                if (!window.confirm(message)) return;
+
+                const response = await fetch("/api/billing/change-plan", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    cache: "no-store",
+                    body: JSON.stringify({ plan }),
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || "Unable to change plan");
+                if (data.paymentLink) {
+                    window.location.href = data.paymentLink;
+                    return;
+                }
+
+                if (data.effectiveAt === "immediately") {
+                    setCurrentPlan(plan);
+                    window.alert(`Your plan is now ${plan === "plus" ? "Plus" : "Pro"}.`);
+                } else {
+                    setScheduledPlan(data.scheduledPlan ?? (plan === "plus" ? "Plus" : "Pro"));
+                    window.alert(`Your downgrade is scheduled for ${periodEnd}. Your current plan remains active until then.`);
+                }
+                return;
+            }
 
             const response = await fetch("/api/billing/checkout", {
                 method: "POST",
@@ -223,7 +325,7 @@ export default function Billing() {
                             No billing plans available
                         </p>
 
-                        <p className="mt-1 text-xs text-muted-foreground">
+                        <p className="mt-1 text-sm text-muted-foreground">
                             Please try again later.
                         </p>
                     </div>
@@ -252,12 +354,12 @@ export default function Billing() {
 
                                 <div>
                                     <div className="mb-1 flex items-center gap-2">
-                                        <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                                        <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                                             Current plan
                                         </span>
 
-                                        <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">
-                                            Active
+                                        <span className={`rounded-full px-2 py-0.5 text-sm font-semibold ${currentPlan !== "free" && subscriptionStatus === "active" ? "bg-emerald-500/10 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
+                                            {currentPlan !== "free" && subscriptionStatus === "active" ? "Active" : "Free plan"}
                                         </span>
                                     </div>
 
@@ -282,12 +384,38 @@ export default function Billing() {
                                 </div>
 
                                 {current && current.price_monthly > 0 && (
-                                    <div className="text-[11px] text-muted-foreground">
+                                    <div className="text-[13px] text-muted-foreground">
                                         / month
                                     </div>
                                 )}
                             </div>
                         </div>
+
+                        {currentPlan !== "free" && subscriptionStatus === "active" && (
+                            <div className="flex flex-col gap-3 border-b border-border/60 bg-muted/20 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <p className="text-sm font-semibold">
+                                        {cancelAtPeriodEnd ? "Cancellation scheduled" : "Manage renewal"}
+                                    </p>
+                                    <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                                        {cancelAtPeriodEnd
+                                            ? `Your paid access continues through ${currentPeriodEnd ? new Date(currentPeriodEnd).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }) : "the end of this billing period"}. The plan will not renew.`
+                                            : "Cancel renewal at the end of your current billing period. Your paid features remain available until then."}
+                                    </p>
+                                    {cancelError && <p role="alert" className="mt-2 text-sm text-destructive">{cancelError}</p>}
+                                </div>
+                                {!cancelAtPeriodEnd && (
+                                    <button
+                                        type="button"
+                                        onClick={handleCancelSubscription}
+                                        disabled={cancelLoading || subscriptionDetailsLoading}
+                                        className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-border px-4 py-2 text-sm font-semibold transition hover:bg-background disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+                                        {cancelLoading ? "Scheduling…" : subscriptionDetailsLoading ? "Loading…" : "Cancel at period end"}
+                                    </button>
+                                )}
+                            </div>
+                        )}
 
                         <div className="grid gap-3 px-6 py-5 sm:grid-cols-2">
                             {/* Impressions */}
@@ -295,7 +423,7 @@ export default function Billing() {
                                 <div className="mb-3 flex items-center gap-2">
                                     <Gauge className="size-4 text-primary" />
 
-                                    <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                                    <span className="text-[13px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                                         Monthly impressions
                                     </span>
                                 </div>
@@ -316,7 +444,7 @@ export default function Billing() {
                                         </span>
                                     </div>
 
-                                    <span className="text-[11px] font-medium text-muted-foreground">
+                                    <span className="text-[13px] font-medium text-muted-foreground">
                                         {Math.round(usagePercentage)}%
                                     </span>
                                 </div>
@@ -336,7 +464,7 @@ export default function Billing() {
                                 <div className="mb-3 flex items-center gap-2">
                                     <Infinity className="size-4 text-primary" />
 
-                                    <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                                    <span className="text-[13px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                                         Websites
                                     </span>
                                 </div>
@@ -360,7 +488,7 @@ export default function Billing() {
                             </div>
 
                             <div>
-                                <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                                <div className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                                     Subscription
                                 </div>
 
@@ -412,7 +540,7 @@ export default function Billing() {
                         <div className="mb-2 flex items-center gap-2">
                             <span className="size-1.5 rounded-full bg-primary" />
 
-                            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                            <span className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                                 Plans
                             </span>
                         </div>
@@ -432,10 +560,6 @@ export default function Billing() {
                             const isCurrent =
                                 plan.slug === currentPlan;
 
-                            const isPaid =
-                                plan.slug === "plus" ||
-                                plan.slug === "pro";
-
                             const features = getPlanFeatures(plan);
 
                             return (
@@ -448,7 +572,7 @@ export default function Billing() {
                                 >
                                     {/* Popular */}
                                     {plan.slug === "plus" && (
-                                        <div className="absolute right-4 top-4 rounded-full bg-primary px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.1em] text-primary-foreground">
+                                        <div className="absolute right-4 top-4 rounded-full bg-primary px-2.5 py-1 text-sm font-bold uppercase tracking-[0.1em] text-primary-foreground">
                                             Most popular
                                         </div>
                                     )}
@@ -487,15 +611,10 @@ export default function Billing() {
                                             type="button"
                                             disabled={
                                                 isCurrent ||
+                                                (plan.slug === "free" && cancelAtPeriodEnd) ||
                                                 loadingPlan !== null
                                             }
-                                            onClick={() => {
-                                                if (isPaid) {
-                                                    handleUpgrade(
-                                                        plan.slug
-                                                    );
-                                                }
-                                            }}
+                                            onClick={() => handlePlanChange(plan.slug)}
                                             className={`mt-5 flex h-10 w-full items-center justify-center gap-2 rounded-xl text-[12px] font-semibold transition-all ${isCurrent
                                                 ? "cursor-default bg-muted text-muted-foreground"
                                                 : plan.slug === "plus"
@@ -511,14 +630,24 @@ export default function Billing() {
                                             ) : isCurrent ? (
                                                 "Current plan"
                                             ) : (
-                                                `Upgrade to ${plan.name}`
+                                                scheduledPlan && plan.name === scheduledPlan
+                                                    ? `${plan.name} scheduled`
+                                                    : plan.slug === "free"
+                                                    ? cancelAtPeriodEnd
+                                                        ? "Free plan scheduled"
+                                                        : "Switch to Free at renewal"
+                                                    : currentPlan === "free"
+                                                        ? `Upgrade to ${plan.name}`
+                                                        : plan.slug === "plus" && currentPlan === "pro"
+                                                            ? `Downgrade to ${plan.name}`
+                                                            : `Upgrade to ${plan.name}`
                                             )}
                                         </button>
                                     </div>
 
                                     {/* Features */}
                                     <div className="border-t border-border/50 px-6 py-5">
-                                        <div className="mb-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                                        <div className="mb-3 text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                                             Includes
                                         </div>
 
@@ -555,7 +684,7 @@ export default function Billing() {
                                 Secure billing
                             </p>
 
-                            <p className="mt-0.5 text-[11px] leading-5 text-muted-foreground">
+                            <p className="mt-0.5 text-[13px] leading-5 text-muted-foreground">
                                 Payments and subscription management are
                                 securely handled by Dodo Payments. You can
                                 upgrade or manage your plan at any time.

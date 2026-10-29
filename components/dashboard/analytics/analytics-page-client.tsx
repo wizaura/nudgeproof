@@ -474,12 +474,12 @@ export default function AnalyticsClient({
                         <div className="mb-2.5 flex items-center gap-2">
                             <span className="size-1.5 rounded-full bg-primary" />
 
-                            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                            <span className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                                 Overview
                             </span>
                         </div>
 
-                        <h1 className="text-[28px] font-semibold leading-none tracking-[-0.035em] sm:text-[30px]">
+                        <h1 className="text-[32px] font-semibold leading-none tracking-[-0.035em] sm:text-[34px]">
                             Analytics
                         </h1>
 
@@ -501,7 +501,7 @@ export default function AnalyticsClient({
                                             .value as Range
                                     )
                                 }
-                                className="h-10 appearance-none rounded-xl border border-border/70 bg-background pl-9 pr-9 text-xs font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                                className="h-10 appearance-none rounded-xl border border-border/70 bg-background pl-9 pr-9 text-sm font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                             >
                                 <option value="7">
                                     Last 7 days
@@ -526,7 +526,7 @@ export default function AnalyticsClient({
                         <button
                             type="button"
                             onClick={refresh}
-                            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border/70 bg-background px-4 text-xs font-semibold transition hover:bg-muted"
+                            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border/70 bg-background px-4 text-sm font-semibold transition hover:bg-muted"
                         >
                             <RefreshCw className="size-3.5" />
                             Refresh
@@ -539,7 +539,7 @@ export default function AnalyticsClient({
                     <div className="flex items-center gap-2">
                         <Globe className="size-3.5 text-primary" />
 
-                        <span className="text-xs font-semibold">
+                        <span className="text-sm font-semibold">
                             Website
                         </span>
                     </div>
@@ -552,7 +552,7 @@ export default function AnalyticsClient({
                                     event.target.value
                                 )
                             }
-                            className="h-10 w-full appearance-none rounded-xl border border-border/70 bg-background px-3.5 pr-9 text-xs font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                            className="h-10 w-full appearance-none rounded-xl border border-border/70 bg-background px-3.5 pr-9 text-sm font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         >
                             <option value="all">
                                 All websites
@@ -577,7 +577,7 @@ export default function AnalyticsClient({
                         <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
                     </div>
 
-                    <span className="text-[11px] text-muted-foreground sm:ml-auto">
+                    <span className="text-[13px] text-muted-foreground sm:ml-auto">
                         {totalEvents} events in selected period
                     </span>
                 </div>
@@ -640,12 +640,12 @@ export default function AnalyticsClient({
                                 Event activity
                             </h2>
 
-                            <p className="mt-0.5 text-[11px] text-muted-foreground">
+                            <p className="mt-0.5 text-[13px] text-muted-foreground">
                                 Events received over the selected period.
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-2 text-[10px] font-medium text-muted-foreground">
+                        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                             <span className="size-2 rounded-full bg-primary" />
                             Events
                         </div>
@@ -653,7 +653,7 @@ export default function AnalyticsClient({
 
                     <div className="p-6">
                         {chartData.length === 0 ? (
-                            <div className="flex h-64 items-center justify-center text-xs text-muted-foreground">
+                            <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
                                 No event data available.
                             </div>
                         ) : (
@@ -688,7 +688,7 @@ export default function AnalyticsClient({
 
                                                     {item.value >
                                                         0 && (
-                                                        <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-lg bg-foreground px-2 py-1 text-[10px] font-medium text-background opacity-0 transition group-hover:opacity-100">
+                                                        <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-lg bg-foreground px-2 py-1 text-sm font-medium text-background opacity-0 transition group-hover:opacity-100">
                                                             {
                                                                 item.value
                                                             }
@@ -700,7 +700,7 @@ export default function AnalyticsClient({
                                     )}
                                 </div>
 
-                                <div className="mt-3 flex justify-between overflow-hidden text-[9px] text-muted-foreground">
+                                <div className="mt-3 flex justify-between overflow-hidden text-sm text-muted-foreground">
                                     {chartData
                                         .filter(
                                             (_, index) =>
@@ -745,7 +745,7 @@ export default function AnalyticsClient({
                                 Event breakdown
                             </h2>
 
-                            <p className="mt-0.5 text-[11px] text-muted-foreground">
+                            <p className="mt-0.5 text-[13px] text-muted-foreground">
                                 Activity by event type.
                             </p>
                         </div>
@@ -779,7 +779,7 @@ export default function AnalyticsClient({
                                                         <Icon className="size-3.5" />
                                                     </div>
 
-                                                    <span className="text-xs font-medium">
+                                                    <span className="text-sm font-medium">
                                                         {
                                                             item.label
                                                         }
@@ -787,13 +787,13 @@ export default function AnalyticsClient({
                                                 </div>
 
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-xs font-semibold">
+                                                    <span className="text-sm font-semibold">
                                                         {
                                                             item.value
                                                         }
                                                     </span>
 
-                                                    <span className="w-8 text-right text-[10px] text-muted-foreground">
+                                                    <span className="w-8 text-right text-sm text-muted-foreground">
                                                         {
                                                             percentage
                                                         }
@@ -824,7 +824,7 @@ export default function AnalyticsClient({
                                 Activity by website
                             </h2>
 
-                            <p className="mt-0.5 text-[11px] text-muted-foreground">
+                            <p className="mt-0.5 text-[13px] text-muted-foreground">
                                 Which websites are sending the most events.
                             </p>
                         </div>
@@ -832,7 +832,7 @@ export default function AnalyticsClient({
                         <div className="p-6">
                             {websiteBreakdown.length ===
                             0 ? (
-                                <div className="flex h-40 items-center justify-center text-xs text-muted-foreground">
+                                <div className="flex h-40 items-center justify-center text-sm text-muted-foreground">
                                     No website activity yet.
                                 </div>
                             ) : (
@@ -869,14 +869,14 @@ export default function AnalyticsClient({
                                                                     <Globe className="size-3.5 text-muted-foreground" />
                                                                 </div>
 
-                                                                <span className="truncate text-xs font-medium">
+                                                                <span className="truncate text-sm font-medium">
                                                                     {
                                                                         website.name
                                                                     }
                                                                 </span>
                                                             </div>
 
-                                                            <span className="ml-3 shrink-0 text-xs font-semibold">
+                                                            <span className="ml-3 shrink-0 text-sm font-semibold">
                                                                 {
                                                                     website.count
                                                                 }
@@ -909,19 +909,19 @@ export default function AnalyticsClient({
                                 Recent activity
                             </h2>
 
-                            <p className="mt-0.5 text-[11px] text-muted-foreground">
+                            <p className="mt-0.5 text-[13px] text-muted-foreground">
                                 Latest events received from your websites.
                             </p>
                         </div>
 
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-sm text-muted-foreground">
                             {recentEvents.length} total
                         </span>
                     </div>
 
                     {paginatedEvents.length ===
                     0 ? (
-                        <div className="flex min-h-[240px] items-center justify-center text-xs text-muted-foreground">
+                        <div className="flex min-h-[240px] items-center justify-center text-sm text-muted-foreground">
                             No activity in this period.
                         </div>
                     ) : (
@@ -930,19 +930,19 @@ export default function AnalyticsClient({
                                 <table className="w-full text-sm">
                                     <thead className="border-b border-border/50 bg-muted/20">
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                                            <th className="px-6 py-3 text-left text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                                                 Event
                                             </th>
 
-                                            <th className="px-6 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                                            <th className="px-6 py-3 text-left text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                                                 Website
                                             </th>
 
-                                            <th className="px-6 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                                            <th className="px-6 py-3 text-left text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                                                 Data
                                             </th>
 
-                                            <th className="px-6 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                                            <th className="px-6 py-3 text-left text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                                                 Received
                                             </th>
                                         </tr>
@@ -972,13 +972,13 @@ export default function AnalyticsClient({
                                                                 </div>
 
                                                                 <div>
-                                                                    <p className="text-xs font-semibold">
+                                                                    <p className="text-sm font-semibold">
                                                                         {formatEventType(
                                                                             event.type
                                                                         )}
                                                                     </p>
 
-                                                                    <p className="mt-0.5 font-mono text-[9px] text-muted-foreground">
+                                                                    <p className="mt-0.5 font-mono text-sm text-muted-foreground">
                                                                         {event.id.slice(
                                                                             0,
                                                                             8
@@ -993,7 +993,7 @@ export default function AnalyticsClient({
                                                             <div className="flex items-center gap-2">
                                                                 <Globe className="size-3.5 text-muted-foreground" />
 
-                                                                <span className="text-xs">
+                                                                <span className="text-sm">
                                                                     {
                                                                         event.website_name
                                                                     }
@@ -1002,7 +1002,7 @@ export default function AnalyticsClient({
                                                         </td>
 
                                                         <td className="max-w-sm px-6 py-4">
-                                                            <p className="truncate text-xs text-muted-foreground">
+                                                            <p className="truncate text-sm text-muted-foreground">
                                                                 {formatEventData(
                                                                     event.data
                                                                 )}
@@ -1010,7 +1010,7 @@ export default function AnalyticsClient({
                                                         </td>
 
                                                         <td className="whitespace-nowrap px-6 py-4">
-                                                            <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+                                                            <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
                                                                 <Clock className="size-3.5" />
 
                                                                 {formatDate(
@@ -1029,7 +1029,7 @@ export default function AnalyticsClient({
                             {totalPages >
                                 1 && (
                                 <div className="flex items-center justify-between border-t border-border/50 px-6 py-4">
-                                    <p className="text-[11px] text-muted-foreground">
+                                    <p className="text-[13px] text-muted-foreground">
                                         Showing{" "}
                                         <span className="font-medium text-foreground">
                                             {(currentPage -
@@ -1072,12 +1072,12 @@ export default function AnalyticsClient({
                                                         )
                                                 )
                                             }
-                                            className="rounded-lg border border-border/70 px-3 py-1.5 text-[11px] font-medium transition hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
+                                            className="rounded-lg border border-border/70 px-3 py-1.5 text-[13px] font-medium transition hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
                                         >
                                             Previous
                                         </button>
 
-                                        <span className="px-2 text-[11px] text-muted-foreground">
+                                        <span className="px-2 text-[13px] text-muted-foreground">
                                             {
                                                 currentPage
                                             }{" "}
@@ -1105,7 +1105,7 @@ export default function AnalyticsClient({
                                                         )
                                                 )
                                             }
-                                            className="rounded-lg border border-border/70 px-3 py-1.5 text-[11px] font-medium transition hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
+                                            className="rounded-lg border border-border/70 px-3 py-1.5 text-[13px] font-medium transition hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
                                         >
                                             Next
                                         </button>
@@ -1141,7 +1141,7 @@ function MetricCard({
                 {change !== undefined &&
                     change !== null && (
                         <span
-                            className={`flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold ${
+                            className={`flex items-center gap-1 rounded-full px-2 py-1 text-sm font-semibold ${
                                 change >= 0
                                     ? "bg-green-500/10 text-green-600"
                                     : "bg-red-500/10 text-red-600"
@@ -1158,7 +1158,7 @@ function MetricCard({
                     )}
             </div>
 
-            <p className="mt-4 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="mt-4 text-[13px] font-medium uppercase tracking-wide text-muted-foreground">
                 {label}
             </p>
 
@@ -1187,14 +1187,14 @@ function SmallMetric({
             </div>
 
             <div className="min-w-0">
-                <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
                     {label}
                 </p>
 
                 <p className="mt-1 text-lg font-semibold">
                     {value.toLocaleString()}
                     {suffix && (
-                        <span className="ml-1 text-xs font-normal text-muted-foreground">
+                        <span className="ml-1 text-sm font-normal text-muted-foreground">
                             {suffix}
                         </span>
                     )}

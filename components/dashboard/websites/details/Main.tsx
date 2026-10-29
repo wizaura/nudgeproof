@@ -103,7 +103,7 @@ export default async function WebsiteDetails({ id }: Props) {
                         inline-flex
                         items-center
                         gap-2
-                        text-xs
+                        text-sm
                         font-medium
                         text-muted-foreground
                         transition-colors
@@ -193,7 +193,7 @@ export default async function WebsiteDetails({ id }: Props) {
                                             max-w-full
                                             items-center
                                             gap-1.5
-                                            text-xs
+                                            text-sm
                                             text-muted-foreground
                                             transition-colors
                                             hover:text-primary
@@ -302,7 +302,7 @@ export default async function WebsiteDetails({ id }: Props) {
                                     block
                                     break-all
                                     font-mono
-                                    text-xs
+                                    text-sm
                                     font-medium
                                     text-foreground/80
                                 "
@@ -337,7 +337,7 @@ export default async function WebsiteDetails({ id }: Props) {
                                         px-1.5
                                         py-0.5
                                         font-mono
-                                        text-[11px]
+                                        text-[13px]
                                         text-foreground
                                     "
                                 >
@@ -379,7 +379,7 @@ export default async function WebsiteDetails({ id }: Props) {
                                     <span className="size-2 rounded-full bg-white/20" />
                                 </div>
 
-                                <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-white/35">
+                                <span className="font-mono text-sm uppercase tracking-[0.14em] text-white/35">
                                     installation.html
                                 </span>
                             </div>
@@ -486,7 +486,7 @@ export default async function WebsiteDetails({ id }: Props) {
                                     Lightweight by design
                                 </p>
 
-                                <p className="mt-1 max-w-xl text-xs leading-5 text-muted-foreground">
+                                <p className="mt-1 max-w-xl text-sm leading-5 text-muted-foreground">
                                     NudgeProof runs asynchronously so your
                                     website can load normally without waiting
                                     for the dashboard.
@@ -504,7 +504,7 @@ export default async function WebsiteDetails({ id }: Props) {
                                 bg-primary/[0.06]
                                 px-2.5
                                 py-1.5
-                                text-[9px]
+                                text-sm
                                 font-semibold
                                 text-primary
                             "
@@ -556,7 +556,7 @@ function SectionIntro({
             <div className="min-w-0">
                 <p
                     className="
-                        text-[9px]
+                        text-sm
                         font-semibold
                         uppercase
                         tracking-[0.16em]
@@ -570,7 +570,7 @@ function SectionIntro({
                     {title}
                 </h2>
 
-                <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">
+                <p className="mt-1 max-w-2xl text-sm leading-5 text-muted-foreground">
                     {description}
                 </p>
             </div>
@@ -593,12 +593,12 @@ function MetaItem({
 }) {
     return (
         <div className="min-w-0">
-            <p className="text-[8px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                 {label}
             </p>
 
             <p
-                className={`mt-1 max-w-[220px] truncate text-[11px] text-foreground/80 ${
+                className={`mt-1 max-w-[220px] truncate text-[13px] text-foreground/80 ${
                     mono ? "font-mono" : "font-medium"
                 }`}
             >
@@ -666,11 +666,11 @@ function QuickAction({
             </div>
 
             <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-semibold">
+                <p className="text-[13px] font-semibold">
                     {title}
                 </p>
 
-                <p className="mt-0.5 truncate text-[9px] text-muted-foreground">
+                <p className="mt-0.5 truncate text-sm text-muted-foreground">
                     {description}
                 </p>
             </div>
@@ -715,16 +715,16 @@ function InstallStep({
             }`}
         >
             <div className="flex items-center gap-2.5">
-                <span className="font-mono text-[9px] font-semibold tracking-[0.12em] text-primary">
+                <span className="font-mono text-sm font-semibold tracking-[0.12em] text-primary">
                     {number}
                 </span>
 
-                <span className="text-xs font-semibold text-white">
+                <span className="text-sm font-semibold text-white">
                     {title}
                 </span>
             </div>
 
-            <p className="mt-1.5 text-[10px] leading-4 text-white/35">
+            <p className="mt-1.5 text-sm leading-4 text-white/35">
                 {description}
             </p>
         </div>

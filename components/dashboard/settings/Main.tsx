@@ -116,14 +116,14 @@ export default function Settings({ user }: SettingsProps) {
                     <div className="mb-2.5 flex items-center gap-2">
                         <span className="size-1.5 rounded-full bg-primary" />
 
-                        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                        <span className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                             Account
                         </span>
                     </div>
 
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                         <div>
-                            <h1 className="text-[28px] font-semibold leading-none tracking-[-0.035em] sm:text-[30px]">
+                            <h1 className="text-[32px] font-semibold leading-none tracking-[-0.035em] sm:text-[34px]">
                                 Settings
                             </h1>
 
@@ -179,7 +179,7 @@ export default function Settings({ user }: SettingsProps) {
 
                         <div className="flex items-center justify-between border-t border-border/50 pt-5">
                             <div>
-                                <p className="text-[11px] text-muted-foreground">
+                                <p className="text-[13px] text-muted-foreground">
                                     Changes are saved to your NudgeProof
                                     account.
                                 </p>
@@ -189,7 +189,7 @@ export default function Settings({ user }: SettingsProps) {
                                 type="button"
                                 onClick={handleSaveProfile}
                                 disabled={saving}
-                                className="inline-flex h-9 items-center gap-2 rounded-xl bg-primary px-4 text-xs font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="inline-flex h-9 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 {saved ? (
                                     <>
@@ -225,7 +225,7 @@ export default function Settings({ user }: SettingsProps) {
                             action={
                                 <button
                                     type="button"
-                                    className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border/60 bg-background px-3 text-xs font-semibold transition hover:border-primary/30 hover:bg-primary/[0.03]"
+                                    className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border/60 bg-background px-3 text-sm font-semibold transition hover:border-primary/30 hover:bg-primary/[0.03]"
                                 >
                                     Change password
                                     <ChevronRight className="size-3.5 text-muted-foreground" />
@@ -240,7 +240,7 @@ export default function Settings({ user }: SettingsProps) {
                             action={
                                 <button
                                     type="button"
-                                    className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border/60 bg-background px-3 text-xs font-semibold transition hover:border-primary/30 hover:bg-primary/[0.03]"
+                                    className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-border/60 bg-background px-3 text-sm font-semibold transition hover:border-primary/30 hover:bg-primary/[0.03]"
                                 >
                                     Sign out all
                                     <ChevronRight className="size-3.5 text-muted-foreground" />
@@ -325,24 +325,24 @@ export default function Settings({ user }: SettingsProps) {
                         <div>
                             <div className="mb-2 flex items-center justify-between">
                                 <div>
-                                    <p className="text-xs font-semibold">
+                                    <p className="text-sm font-semibold">
                                         API key
                                     </p>
 
-                                    <p className="mt-0.5 text-[10px] text-muted-foreground">
+                                    <p className="mt-0.5 text-sm text-muted-foreground">
                                         Use this key to authenticate
                                         requests to the NudgeProof API.
                                     </p>
                                 </div>
 
-                                <span className="rounded-full bg-primary/10 px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-primary">
+                                <span className="rounded-full bg-primary/10 px-2 py-1 text-sm font-semibold uppercase tracking-[0.08em] text-primary">
                                     Live
                                 </span>
                             </div>
 
                             <div className="flex flex-col gap-2 sm:flex-row">
                                 <div className="flex h-10 min-w-0 flex-1 items-center rounded-xl border border-border/60 bg-muted/30 px-3">
-                                    <code className="truncate text-[11px] text-muted-foreground">
+                                    <code className="truncate text-[13px] text-muted-foreground">
                                         {apiKey}
                                     </code>
                                 </div>
@@ -350,7 +350,7 @@ export default function Settings({ user }: SettingsProps) {
                                 <button
                                     type="button"
                                     onClick={copyApiKey}
-                                    className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border/60 bg-background px-3 text-xs font-semibold transition hover:border-primary/30 hover:bg-primary/[0.03]"
+                                    className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border/60 bg-background px-3 text-sm font-semibold transition hover:border-primary/30 hover:bg-primary/[0.03]"
                                 >
                                     {copied ? (
                                         <>
@@ -369,7 +369,7 @@ export default function Settings({ user }: SettingsProps) {
                                     type="button"
                                     onClick={regenerateApiKey}
                                     disabled={regenerating}
-                                    className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border/60 bg-background px-3 text-xs font-semibold transition hover:border-primary/30 hover:bg-primary/[0.03] disabled:opacity-60"
+                                    className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border/60 bg-background px-3 text-sm font-semibold transition hover:border-primary/30 hover:bg-primary/[0.03] disabled:opacity-60"
                                 >
                                     <RefreshCw
                                         className={`size-3.5 ${
@@ -385,7 +385,7 @@ export default function Settings({ user }: SettingsProps) {
                                 </button>
                             </div>
 
-                            <p className="mt-2 text-[10px] text-muted-foreground">
+                            <p className="mt-2 text-sm text-muted-foreground">
                                 Keep your API key private. Never expose it
                                 in client-side code.
                             </p>
@@ -398,11 +398,11 @@ export default function Settings({ user }: SettingsProps) {
                                 </div>
 
                                 <div>
-                                    <p className="text-xs font-semibold">
+                                    <p className="text-sm font-semibold">
                                         API & webhook documentation
                                     </p>
 
-                                    <p className="mt-1 text-[10px] leading-5 text-muted-foreground">
+                                    <p className="mt-1 text-sm leading-5 text-muted-foreground">
                                         Connect your application to
                                         NudgeProof using the API or
                                         Custom Webhook integration.
@@ -410,7 +410,7 @@ export default function Settings({ user }: SettingsProps) {
 
                                     <a
                                         href="/dashboard/integrations"
-                                        className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-primary hover:underline"
+                                        className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
                                     >
                                         View integrations
                                         <ChevronRight className="size-3" />
@@ -433,7 +433,7 @@ export default function Settings({ user }: SettingsProps) {
                                 Danger zone
                             </h2>
 
-                            <p className="mt-0.5 text-[11px] text-muted-foreground">
+                            <p className="mt-0.5 text-[13px] text-muted-foreground">
                                 These actions can permanently affect your
                                 account and data.
                             </p>
@@ -442,11 +442,11 @@ export default function Settings({ user }: SettingsProps) {
 
                     <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p className="text-xs font-semibold">
+                            <p className="text-sm font-semibold">
                                 Delete account
                             </p>
 
-                            <p className="mt-1 max-w-xl text-[10px] leading-5 text-muted-foreground">
+                            <p className="mt-1 max-w-xl text-sm leading-5 text-muted-foreground">
                                 Permanently delete your NudgeProof
                                 account, websites, widgets and associated
                                 data.
@@ -460,7 +460,7 @@ export default function Settings({ user }: SettingsProps) {
                                     "Account deletion should be connected to your secure account deletion flow."
                                 );
                             }}
-                            className="inline-flex h-9 shrink-0 items-center justify-center rounded-xl border border-destructive/30 px-4 text-xs font-semibold text-destructive transition hover:bg-destructive/5"
+                            className="inline-flex h-9 shrink-0 items-center justify-center rounded-xl border border-destructive/30 px-4 text-sm font-semibold text-destructive transition hover:bg-destructive/5"
                         >
                             Delete account
                         </button>
@@ -476,7 +476,7 @@ export default function Settings({ user }: SettingsProps) {
 /* -------------------------------------------------------------------------- */
 
 const inputClass =
-    "h-10 w-full rounded-xl border border-border/60 bg-background px-3 text-xs outline-none transition placeholder:text-muted-foreground focus:border-primary/40 focus:ring-2 focus:ring-primary/10";
+    "h-10 w-full rounded-xl border border-border/60 bg-background px-3 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary/40 focus:ring-2 focus:ring-primary/10";
 
 function SectionHeader({
     icon: Icon,
@@ -498,7 +498,7 @@ function SectionHeader({
                     {title}
                 </h2>
 
-                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                <p className="mt-0.5 text-[13px] text-muted-foreground">
                     {description}
                 </p>
             </div>
@@ -517,11 +517,11 @@ function Field({
 }) {
     return (
         <div>
-            <label className="text-xs font-semibold">
+            <label className="text-sm font-semibold">
                 {label}
             </label>
 
-            <p className="mb-2 mt-0.5 text-[10px] text-muted-foreground">
+            <p className="mb-2 mt-0.5 text-sm text-muted-foreground">
                 {description}
             </p>
 
@@ -549,11 +549,11 @@ function SettingsRow({
                 </div>
 
                 <div>
-                    <p className="text-xs font-semibold">
+                    <p className="text-sm font-semibold">
                         {title}
                     </p>
 
-                    <p className="mt-0.5 text-[10px] text-muted-foreground">
+                    <p className="mt-0.5 text-sm text-muted-foreground">
                         {description}
                     </p>
                 </div>
@@ -578,11 +578,11 @@ function NotificationRow({
     return (
         <div className="flex items-center justify-between gap-5 px-6 py-4">
             <div>
-                <p className="text-xs font-semibold">
+                <p className="text-sm font-semibold">
                     {title}
                 </p>
 
-                <p className="mt-0.5 text-[10px] leading-5 text-muted-foreground">
+                <p className="mt-0.5 text-sm leading-5 text-muted-foreground">
                     {description}
                 </p>
             </div>

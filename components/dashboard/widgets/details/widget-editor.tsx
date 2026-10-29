@@ -355,7 +355,7 @@ export default function WidgetEditor({
                                 Widget status
                             </h2>
 
-                            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                            <p className="mt-1 text-sm leading-5 text-muted-foreground">
                                 Control whether this widget is displayed on your website.
                             </p>
                         </div>
@@ -401,7 +401,7 @@ export default function WidgetEditor({
                                 Danger zone
                             </h2>
 
-                            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                            <p className="mt-1 text-sm leading-5 text-muted-foreground">
                                 Permanently delete this widget.
                             </p>
                         </div>
@@ -545,11 +545,11 @@ function LiveVisitorsEditor({
                     </div>
 
                     <div>
-                        <p className="text-xs font-semibold">
+                        <p className="text-sm font-semibold">
                             Live activity
                         </p>
 
-                        <p className="mt-0.5 text-[11px] text-muted-foreground">
+                        <p className="mt-0.5 text-[13px] text-muted-foreground">
                             Visitor count updates automatically.
                         </p>
                     </div>
@@ -671,7 +671,7 @@ function ReviewEditor({
                             ))}
                         </div>
 
-                        <p className="mt-1 text-[11px] text-muted-foreground">
+                        <p className="mt-1 text-[13px] text-muted-foreground">
                             Highlight your strongest customer feedback.
                         </p>
                     </div>
@@ -792,11 +792,11 @@ function AnnouncementEditor({
                     </div>
 
                     <div>
-                        <p className="text-xs font-semibold">
+                        <p className="text-sm font-semibold">
                             Promotional notification
                         </p>
 
-                        <p className="mt-0.5 text-[11px] text-muted-foreground">
+                        <p className="mt-0.5 text-[13px] text-muted-foreground">
                             Keep your message short and action-focused.
                         </p>
                     </div>
@@ -929,7 +929,7 @@ function WidgetTypeSection({
 
                     <div className="min-w-0">
                         <div className="mb-1.5 flex items-center gap-2">
-                            <span className="text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">
+                            <span className="text-sm font-semibold uppercase tracking-[0.13em] text-muted-foreground">
                                 {eyebrow}
                             </span>
                         </div>
@@ -938,7 +938,7 @@ function WidgetTypeSection({
                             {title}
                         </h2>
 
-                        <p className="mt-1.5 max-w-2xl text-xs leading-5 text-muted-foreground">
+                        <p className="mt-1.5 max-w-2xl text-sm leading-5 text-muted-foreground">
                             {description}
                         </p>
                     </div>
@@ -964,7 +964,7 @@ function WidgetPoweredBy() {
                     <Sparkles className="size-3.5" />
                 </div>
 
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-[13px] text-muted-foreground">
                     Powered by{" "}
                     <strong className="font-bold text-foreground">
                         NudgeProof
@@ -972,7 +972,7 @@ function WidgetPoweredBy() {
                 </span>
             </div>
 
-            <span className="text-[10px] text-muted-foreground/60">
+            <span className="text-sm text-muted-foreground/60">
                 Social proof
             </span>
         </div>
@@ -1132,7 +1132,7 @@ function AppearanceEditor({
 
                     <div>
                         <div className="mb-1.5 flex items-center gap-2">
-                            <span className="text-[10px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">
+                            <span className="text-sm font-semibold uppercase tracking-[0.13em] text-muted-foreground">
                                 Customization
                             </span>
                         </div>
@@ -1141,7 +1141,7 @@ function AppearanceEditor({
                             Appearance
                         </h2>
 
-                        <p className="mt-1.5 text-xs leading-5 text-muted-foreground">
+                        <p className="mt-1.5 text-sm leading-5 text-muted-foreground">
                             Customize the look and feel of your notification.
                         </p>
                     </div>
@@ -1156,7 +1156,7 @@ function AppearanceEditor({
                             Design style
                         </label>
 
-                        <p className="mt-1 text-xs text-muted-foreground">
+                        <p className="mt-1 text-sm text-muted-foreground">
                             Start with a preset or customize everything below.
                         </p>
                     </div>
@@ -1249,11 +1249,11 @@ function AppearanceEditor({
                                         </div>
                                     </div>
 
-                                    <p className="text-xs font-semibold">
+                                    <p className="text-sm font-semibold">
                                         {preset.label}
                                     </p>
 
-                                    <p className="mt-0.5 text-[11px] text-muted-foreground">
+                                    <p className="mt-0.5 text-[13px] text-muted-foreground">
                                         {preset.description}
                                     </p>
                                 </button>
@@ -1272,7 +1272,7 @@ function AppearanceEditor({
                                 Position
                             </label>
 
-                            <p className="mt-0.5 text-xs text-muted-foreground">
+                            <p className="mt-0.5 text-sm text-muted-foreground">
                                 Choose where the notification appears.
                             </p>
                         </div>
@@ -1325,7 +1325,7 @@ function AppearanceEditor({
                                         />
                                     </div>
 
-                                    <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[11px] font-medium text-muted-foreground">
+                                    <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[13px] font-medium text-muted-foreground">
                                         {item.label}
                                     </span>
                                 </button>
@@ -1344,7 +1344,7 @@ function AppearanceEditor({
                                 Size & spacing
                             </label>
 
-                            <p className="mt-0.5 text-xs text-muted-foreground">
+                            <p className="mt-0.5 text-sm text-muted-foreground">
                                 Control the overall proportions of the widget.
                             </p>
                         </div>
@@ -1414,7 +1414,7 @@ function AppearanceEditor({
                                 Colors
                             </label>
 
-                            <p className="mt-0.5 text-xs text-muted-foreground">
+                            <p className="mt-0.5 text-sm text-muted-foreground">
                                 Match the notification to your brand.
                             </p>
                         </div>
@@ -1489,7 +1489,7 @@ function AppearanceEditor({
                                 Shadow
                             </label>
 
-                            <p className="mt-0.5 text-xs text-muted-foreground">
+                            <p className="mt-0.5 text-sm text-muted-foreground">
                                 Control the depth of the notification.
                             </p>
                         </div>
@@ -1529,7 +1529,7 @@ function AppearanceEditor({
                                             }}
                                         />
 
-                                        <p className="text-xs font-medium">
+                                        <p className="text-sm font-medium">
                                             {option.label}
                                         </p>
                                     </button>
@@ -1549,7 +1549,7 @@ function AppearanceEditor({
                                 Display options
                             </label>
 
-                            <p className="mt-0.5 text-xs text-muted-foreground">
+                            <p className="mt-0.5 text-sm text-muted-foreground">
                                 Choose which supporting elements appear.
                             </p>
                         </div>
@@ -1646,7 +1646,7 @@ function TextInput({
             />
 
             {description && (
-                <p className="text-[11px] leading-4 text-muted-foreground">
+                <p className="text-[13px] leading-4 text-muted-foreground">
                     {description}
                 </p>
             )}
@@ -1739,7 +1739,7 @@ function NumberInput({
                 />
 
                 {suffix && (
-                    <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                    <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                         {suffix}
                     </span>
                 )}
@@ -1823,7 +1823,7 @@ function ToggleRow({
                     {label}
                 </p>
 
-                <p className="mt-0.5 text-xs leading-4 text-muted-foreground">
+                <p className="mt-0.5 text-sm leading-4 text-muted-foreground">
                     {description}
                 </p>
             </div>
@@ -1880,7 +1880,7 @@ function EditorSectionHeader({
                         {title}
                     </h2>
 
-                    <p className="mt-1 text-xs text-muted-foreground">
+                    <p className="mt-1 text-sm text-muted-foreground">
                         {description}
                     </p>
                 </div>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { subscriptionPlanToPlanSlug } from "@/lib/billing/plans";
 
 export async function GET() {
     try {
@@ -77,7 +78,12 @@ export async function GET() {
         // ---------------------------------------------------------
         // Resolve plan
         // ---------------------------------------------------------
-        const planSlug = subscription?.plan || "free";
+        // A cancelled, paused, or past-due subscription must not keep
+        // granting its paid plan in the dashboard or embed APIs.
+        const planSlug =
+            subscription?.status === "active"
+                ? subscriptionPlanToPlanSlug(subscription.plan) ?? "free"
+                : "free";
 
         const { data: plan, error: planError } = await supabase
             .from("plans")
@@ -165,8 +171,6 @@ export async function GET() {
             .eq("month", month)
             .maybeSingle();
 
-        console.log(usage,'usage', month, accountId)
-
         if (usageError) {
             console.error("Failed to fetch account usage:", usageError);
 
@@ -199,7 +203,7 @@ export async function GET() {
             subscription: subscription
                 ? {
                       id: subscription.id,
-                      plan: subscription.plan,
+                      plan: subscriptionPlanToPlanSlug(subscription.plan) ?? "free",
                       status: subscription.status,
                       current_period_start:
                           subscription.current_period_start,

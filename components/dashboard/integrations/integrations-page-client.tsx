@@ -92,13 +92,13 @@ export default function IntegrationsPageClient({
                         <div className="mb-2.5 flex items-center gap-2">
                             <span className="size-1.5 rounded-full bg-primary" />
 
-                            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                            <span className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                                 Developer
                             </span>
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <h1 className="text-[28px] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[30px]">
+                            <h1 className="text-[32px] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[34px]">
                                 Integrations
                             </h1>
 
@@ -117,11 +117,11 @@ export default function IntegrationsPageClient({
                         </div>
 
                         <div>
-                            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                            <p className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
                                 Connections
                             </p>
 
-                            <p className="text-xs font-semibold">
+                            <p className="text-sm font-semibold">
                                 {websites.length} website
                                 {websites.length !== 1 ? "s" : ""}
                             </p>
@@ -139,7 +139,7 @@ export default function IntegrationsPageClient({
                                     <Webhook className="size-4.5" />
                                 </div>
 
-                                <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                                <span className="rounded-full bg-primary/10 px-2.5 py-1 text-sm font-semibold uppercase tracking-wide text-primary">
                                     Available
                                 </span>
                             </div>
@@ -149,7 +149,7 @@ export default function IntegrationsPageClient({
                                     Custom Webhook
                                 </h2>
 
-                                <p className="mt-1.5 text-xs leading-5 text-muted-foreground">
+                                <p className="mt-1.5 text-sm leading-5 text-muted-foreground">
                                     Send purchases, signups, reviews,
                                     and custom events from any backend.
                                 </p>
@@ -157,7 +157,7 @@ export default function IntegrationsPageClient({
 
                             <a
                                 href="#custom-webhook"
-                                className="mt-5 inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-primary px-3.5 text-xs font-semibold text-primary-foreground transition hover:opacity-90"
+                                className="mt-5 inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-primary px-3.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
                             >
                                 Configure
                                 <ExternalLink className="size-3.5" />
@@ -206,7 +206,7 @@ export default function IntegrationsPageClient({
                                     Custom Webhook
                                 </h2>
 
-                                <p className="mt-0.5 text-xs text-muted-foreground">
+                                <p className="mt-0.5 text-sm text-muted-foreground">
                                     Connect any website or backend to
                                     NudgeProof.
                                 </p>
@@ -224,14 +224,14 @@ export default function IntegrationsPageClient({
                                 Add a website first
                             </h3>
 
-                            <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground">
+                            <p className="mt-1 max-w-sm text-sm leading-5 text-muted-foreground">
                                 Create a website in NudgeProof before
                                 configuring a webhook.
                             </p>
 
                             <a
                                 href="/dashboard/websites/new"
-                                className="mt-4 inline-flex h-9 items-center rounded-xl bg-primary px-4 text-xs font-semibold text-primary-foreground transition hover:opacity-90"
+                                className="mt-4 inline-flex h-9 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
                             >
                                 Add website
                             </a>
@@ -242,7 +242,7 @@ export default function IntegrationsPageClient({
                             <div className="space-y-2">
                                 <label
                                     htmlFor="integration-website"
-                                    className="text-xs font-semibold"
+                                    className="text-sm font-semibold"
                                 >
                                     Website
                                 </label>
@@ -292,11 +292,11 @@ export default function IntegrationsPageClient({
                                             </div>
 
                                             <div>
-                                                <p className="text-xs font-semibold">
+                                                <p className="text-sm font-semibold">
                                                     Website status
                                                 </p>
 
-                                                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                                                <p className="mt-0.5 text-[13px] text-muted-foreground">
                                                     This website is{" "}
                                                     <span className="font-medium text-foreground">
                                                         {
@@ -307,7 +307,7 @@ export default function IntegrationsPageClient({
                                             </div>
                                         </div>
 
-                                        <span className="rounded-full border border-border/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                        <span className="rounded-full border border-border/60 px-2.5 py-1 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                                             {selectedWebsite.status}
                                         </span>
                                     </div>
@@ -318,14 +318,14 @@ export default function IntegrationsPageClient({
                                             <div className="flex items-center gap-2">
                                                 <Code2 className="size-3.5 text-primary" />
 
-                                                <label className="text-xs font-semibold">
+                                                <label className="text-sm font-semibold">
                                                     Webhook URL
                                                 </label>
                                             </div>
                                         </div>
 
                                         <div className="flex overflow-hidden rounded-xl border border-border/70 bg-muted/20">
-                                            <code className="min-w-0 flex-1 overflow-x-auto px-3.5 py-3 text-[11px] leading-5">
+                                            <code className="min-w-0 flex-1 overflow-x-auto px-3.5 py-3 text-[13px] leading-5">
                                                 {webhookUrl}
                                             </code>
 
@@ -337,7 +337,7 @@ export default function IntegrationsPageClient({
                                                         "url"
                                                     )
                                                 }
-                                                className="flex shrink-0 items-center gap-2 border-l border-border/70 px-3.5 text-xs font-medium transition hover:bg-muted"
+                                                className="flex shrink-0 items-center gap-2 border-l border-border/70 px-3.5 text-sm font-medium transition hover:bg-muted"
                                             >
                                                 {copied === "url" ? (
                                                     <>
@@ -359,13 +359,13 @@ export default function IntegrationsPageClient({
                                         <div className="mb-2 flex items-center gap-2">
                                             <KeyRound className="size-3.5 text-primary" />
 
-                                            <label className="text-xs font-semibold">
+                                            <label className="text-sm font-semibold">
                                                 Webhook Secret
                                             </label>
                                         </div>
 
                                         <div className="flex overflow-hidden rounded-xl border border-border/70 bg-muted/20">
-                                            <code className="min-w-0 flex-1 overflow-x-auto px-3.5 py-3 text-[11px] leading-5">
+                                            <code className="min-w-0 flex-1 overflow-x-auto px-3.5 py-3 text-[13px] leading-5">
                                                 {
                                                     selectedWebsite.webhook_secret
                                                 }
@@ -383,7 +383,7 @@ export default function IntegrationsPageClient({
                                                         "secret"
                                                     )
                                                 }
-                                                className="flex shrink-0 items-center gap-2 border-l border-border/70 px-3.5 text-xs font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+                                                className="flex shrink-0 items-center gap-2 border-l border-border/70 px-3.5 text-sm font-medium transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
                                             >
                                                 {copied === "secret" ? (
                                                     <>
@@ -399,7 +399,7 @@ export default function IntegrationsPageClient({
                                             </button>
                                         </div>
 
-                                        <p className="mt-2 text-[11px] leading-5 text-muted-foreground">
+                                        <p className="mt-2 text-[13px] leading-5 text-muted-foreground">
                                             Keep this secret on your server.
                                             Never put it in frontend JavaScript.
                                         </p>
@@ -407,7 +407,7 @@ export default function IntegrationsPageClient({
 
                                     {/* Supported events */}
                                     <div>
-                                        <h3 className="text-xs font-semibold">
+                                        <h3 className="text-sm font-semibold">
                                             Supported events
                                         </h3>
 
@@ -420,7 +420,7 @@ export default function IntegrationsPageClient({
                                             ].map((event) => (
                                                 <code
                                                     key={event}
-                                                    className="rounded-lg border border-border/60 bg-muted/40 px-2.5 py-1.5 text-[11px] font-medium"
+                                                    className="rounded-lg border border-border/60 bg-muted/40 px-2.5 py-1.5 text-[13px] font-medium"
                                                 >
                                                     {event}
                                                 </code>
@@ -431,7 +431,7 @@ export default function IntegrationsPageClient({
                                     {/* Example */}
                                     <div>
                                         <div className="mb-2.5 flex items-center justify-between">
-                                            <h3 className="text-xs font-semibold">
+                                            <h3 className="text-sm font-semibold">
                                                 Example request
                                             </h3>
 
@@ -443,7 +443,7 @@ export default function IntegrationsPageClient({
                                                         "curl"
                                                     )
                                                 }
-                                                className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground transition hover:text-foreground"
+                                                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition hover:text-foreground"
                                             >
                                                 {copied === "curl" ? (
                                                     <>
@@ -459,13 +459,13 @@ export default function IntegrationsPageClient({
                                             </button>
                                         </div>
 
-                                        <pre className="overflow-x-auto rounded-xl border border-border/60 bg-[#111] p-4 text-[11px] leading-5 text-white/90">
+                                        <pre className="overflow-x-auto rounded-xl border border-border/60 bg-[#111] p-4 text-[13px] leading-5 text-white/90">
                                             <code>
                                                 {curlExample}
                                             </code>
                                         </pre>
 
-                                        <p className="mt-2 text-[11px] leading-5 text-muted-foreground">
+                                        <p className="mt-2 text-[13px] leading-5 text-muted-foreground">
                                             Replace the placeholders with values
                                             from your own backend, such as the
                                             customer name and product name.
@@ -480,11 +480,11 @@ export default function IntegrationsPageClient({
                                             </div>
 
                                             <div>
-                                                <p className="text-xs font-semibold">
+                                                <p className="text-sm font-semibold">
                                                     Server-side integration
                                                 </p>
 
-                                                <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
+                                                <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
                                                     Send the webhook from your
                                                     backend after the purchase
                                                     or other action has
@@ -523,7 +523,7 @@ function IntegrationCard({
                         {icon}
                     </div>
 
-                    <span className="rounded-full border border-border/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    <span className="rounded-full border border-border/60 px-2.5 py-1 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                         Coming soon
                     </span>
                 </div>
@@ -533,7 +533,7 @@ function IntegrationCard({
                         {title}
                     </h2>
 
-                    <p className="mt-1.5 text-xs leading-5 text-muted-foreground">
+                    <p className="mt-1.5 text-sm leading-5 text-muted-foreground">
                         {description}
                     </p>
                 </div>
@@ -541,7 +541,7 @@ function IntegrationCard({
                 <button
                     type="button"
                     disabled
-                    className="mt-5 inline-flex h-9 items-center justify-center rounded-xl border border-border/70 px-3.5 text-xs font-semibold opacity-50"
+                    className="mt-5 inline-flex h-9 items-center justify-center rounded-xl border border-border/70 px-3.5 text-sm font-semibold opacity-50"
                 >
                     Connect
                 </button>

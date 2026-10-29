@@ -92,17 +92,17 @@ export default function WidgetWorkspace({
                         <div className="mb-2.5 flex items-center gap-2">
                             <span className="size-1.5 rounded-full bg-primary" />
 
-                            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                            <span className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                                 Widget editor
                             </span>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-3">
-                            <h1 className="text-[28px] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[30px]">
+                            <h1 className="text-[32px] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[34px]">
                                 {name || "Untitled widget"}
                             </h1>
 
-                            <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                            <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2.5 py-1 text-sm font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                                 {meta.label}
                             </span>
                         </div>
@@ -120,7 +120,7 @@ export default function WidgetWorkspace({
                                     setPreviewMode("desktop")
                                 }
                                 className={[
-                                    "inline-flex h-8 items-center gap-2 rounded-lg px-3 text-xs font-medium transition",
+                                    "inline-flex h-8 items-center gap-2 rounded-lg px-3 text-sm font-medium transition",
                                     previewMode === "desktop"
                                         ? "bg-primary/10 text-primary"
                                         : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -136,7 +136,7 @@ export default function WidgetWorkspace({
                                     setPreviewMode("mobile")
                                 }
                                 className={[
-                                    "inline-flex h-8 items-center gap-2 rounded-lg px-3 text-xs font-medium transition",
+                                    "inline-flex h-8 items-center gap-2 rounded-lg px-3 text-sm font-medium transition",
                                     previewMode === "mobile"
                                         ? "bg-primary/10 text-primary"
                                         : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -188,7 +188,7 @@ export default function WidgetWorkspace({
                                         </h2>
                                     </div>
 
-                                    <p className="text-[11px] leading-4 text-muted-foreground">
+                                    <p className="text-[13px] leading-4 text-muted-foreground">
                                         Changes appear instantly.
                                     </p>
                                 </div>
@@ -199,7 +199,7 @@ export default function WidgetWorkspace({
                                         <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
                                     </span>
 
-                                    <span className="text-[10px] font-medium text-muted-foreground">
+                                    <span className="text-sm font-medium text-muted-foreground">
                                         Live
                                     </span>
                                 </div>
@@ -223,7 +223,7 @@ export default function WidgetWorkspace({
                                     <span className="size-2 rounded-full bg-emerald-400/70" />
 
                                     <div className="ml-2 flex h-6 min-w-0 flex-1 items-center rounded-md border border-border/50 bg-background/70 px-2.5">
-                                        <span className="truncate text-[9px] text-muted-foreground">
+                                        <span className="truncate text-sm text-muted-foreground">
                                             yourwebsite.com
                                         </span>
                                     </div>
@@ -247,12 +247,12 @@ export default function WidgetWorkspace({
                                         <Sparkles className="size-3" />
                                     </span>
 
-                                    <p className="truncate text-[10px] leading-4 text-muted-foreground">
+                                    <p className="truncate text-sm leading-4 text-muted-foreground">
                                         Customize the design from Appearance.
                                     </p>
                                 </div>
 
-                                <span className="shrink-0 text-[10px] font-medium text-muted-foreground">
+                                <span className="shrink-0 text-sm font-medium text-muted-foreground">
                                     {previewMode === "mobile"
                                         ? "375px"
                                         : "Desktop"}

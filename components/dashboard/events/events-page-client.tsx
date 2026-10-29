@@ -196,12 +196,12 @@ export default function EventsPageClient({
                         <div className="mb-2.5 flex items-center gap-2">
                             <span className="size-1.5 rounded-full bg-primary" />
 
-                            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                            <span className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                                 Activity
                             </span>
                         </div>
 
-                        <h1 className="text-[28px] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[30px]">
+                        <h1 className="text-[32px] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[34px]">
                             Events
                         </h1>
 
@@ -213,7 +213,7 @@ export default function EventsPageClient({
                     <button
                         type="button"
                         onClick={refresh}
-                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border/70 bg-background px-4 text-xs font-semibold transition hover:bg-muted"
+                        className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-border/70 bg-background px-4 text-sm font-semibold transition hover:bg-muted"
                     >
                         <RefreshCw className="size-3.5" />
                         Refresh
@@ -223,7 +223,7 @@ export default function EventsPageClient({
                 {/* Stats */}
                 <div className="grid gap-4 sm:grid-cols-3">
                     <div className="rounded-2xl border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-sm">
-                        <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                        <div className="flex items-center gap-2 text-[13px] font-medium uppercase tracking-wide text-muted-foreground">
                             <Activity className="size-3.5" />
                             Total events
                         </div>
@@ -232,13 +232,13 @@ export default function EventsPageClient({
                             {events.length}
                         </p>
 
-                        <p className="mt-1 text-[11px] text-muted-foreground">
+                        <p className="mt-1 text-[13px] text-muted-foreground">
                             Received activity
                         </p>
                     </div>
 
                     <div className="rounded-2xl border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-sm">
-                        <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                        <div className="flex items-center gap-2 text-[13px] font-medium uppercase tracking-wide text-muted-foreground">
                             <ShoppingBag className="size-3.5" />
                             Purchases
                         </div>
@@ -247,13 +247,13 @@ export default function EventsPageClient({
                             {purchaseCount}
                         </p>
 
-                        <p className="mt-1 text-[11px] text-muted-foreground">
+                        <p className="mt-1 text-[13px] text-muted-foreground">
                             Purchase events
                         </p>
                     </div>
 
                     <div className="rounded-2xl border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-sm">
-                        <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                        <div className="flex items-center gap-2 text-[13px] font-medium uppercase tracking-wide text-muted-foreground">
                             <Globe className="size-3.5" />
                             Websites
                         </div>
@@ -262,7 +262,7 @@ export default function EventsPageClient({
                             {websites.length}
                         </p>
 
-                        <p className="mt-1 text-[11px] text-muted-foreground">
+                        <p className="mt-1 text-[13px] text-muted-foreground">
                             Connected websites
                         </p>
                     </div>
@@ -278,7 +278,7 @@ export default function EventsPageClient({
                                     event.target.value
                                 )
                             }
-                            className="h-10 w-full appearance-none rounded-xl border border-border/70 bg-background px-3.5 pr-9 text-xs font-medium outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
+                            className="h-10 w-full appearance-none rounded-xl border border-border/70 bg-background px-3.5 pr-9 text-sm font-medium outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
                         >
                             <option value="all">
                                 All event types
@@ -305,7 +305,7 @@ export default function EventsPageClient({
                                     event.target.value
                                 )
                             }
-                            className="h-10 w-full appearance-none rounded-xl border border-border/70 bg-background px-3.5 pr-9 text-xs font-medium outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
+                            className="h-10 w-full appearance-none rounded-xl border border-border/70 bg-background px-3.5 pr-9 text-sm font-medium outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
                         >
                             <option value="all">
                                 All websites
@@ -324,7 +324,7 @@ export default function EventsPageClient({
                         <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
                     </div>
 
-                    <div className="ml-auto flex items-center px-1 text-[11px] text-muted-foreground">
+                    <div className="ml-auto flex items-center px-1 text-[13px] text-muted-foreground">
                         {filteredEvents.length}{" "}
                         {filteredEvents.length === 1
                             ? "event"
@@ -344,7 +344,7 @@ export default function EventsPageClient({
                                 No events found
                             </h2>
 
-                            <p className="mt-1 max-w-sm text-xs leading-5 text-muted-foreground">
+                            <p className="mt-1 max-w-sm text-sm leading-5 text-muted-foreground">
                                 Events will appear here when your website
                                 sends activity to NudgeProof.
                             </p>
@@ -356,19 +356,19 @@ export default function EventsPageClient({
                             <table className="w-full text-sm">
                                 <thead className="border-b border-border/60 bg-muted/20">
                                     <tr>
-                                        <th className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                                        <th className="px-5 py-3.5 text-left text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                                             Event
                                         </th>
 
-                                        <th className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                                        <th className="px-5 py-3.5 text-left text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                                             Website
                                         </th>
 
-                                        <th className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                                        <th className="px-5 py-3.5 text-left text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                                             Data
                                         </th>
 
-                                        <th className="px-5 py-3.5 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                                        <th className="px-5 py-3.5 text-left text-sm font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                                             Received
                                         </th>
                                     </tr>
@@ -399,13 +399,13 @@ export default function EventsPageClient({
                                                             </div>
 
                                                             <div className="min-w-0">
-                                                                <p className="text-xs font-semibold">
+                                                                <p className="text-sm font-semibold">
                                                                     {formatEventType(
                                                                         event.type
                                                                     )}
                                                                 </p>
 
-                                                                <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
+                                                                <p className="mt-0.5 font-mono text-sm text-muted-foreground">
                                                                     {event.id.slice(
                                                                         0,
                                                                         8
@@ -420,7 +420,7 @@ export default function EventsPageClient({
                                                         <div className="flex items-center gap-2">
                                                             <Globe className="size-3.5 shrink-0 text-muted-foreground" />
 
-                                                            <span className="text-xs font-medium">
+                                                            <span className="text-sm font-medium">
                                                                 {
                                                                     event.website_name
                                                                 }
@@ -429,7 +429,7 @@ export default function EventsPageClient({
                                                     </td>
 
                                                     <td className="max-w-md px-5 py-4">
-                                                        <p className="truncate text-xs text-muted-foreground">
+                                                        <p className="truncate text-sm text-muted-foreground">
                                                             {formatEventData(
                                                                 event.data
                                                             )}
@@ -437,7 +437,7 @@ export default function EventsPageClient({
                                                     </td>
 
                                                     <td className="whitespace-nowrap px-5 py-4">
-                                                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                             <Clock className="size-3.5" />
 
                                                             {formatDate(
@@ -456,7 +456,7 @@ export default function EventsPageClient({
                         {/* Pagination */}
                         {totalPages > 1 && (
                             <div className="flex flex-col gap-3 border-t border-border/60 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-                                <p className="text-[11px] text-muted-foreground">
+                                <p className="text-[13px] text-muted-foreground">
                                     Showing{" "}
                                     <span className="font-medium text-foreground">
                                         {(currentPage - 1) *
@@ -512,7 +512,7 @@ export default function EventsPageClient({
                                                     page
                                                 )
                                             }
-                                            className={`flex size-9 items-center justify-center rounded-lg text-xs font-semibold transition ${
+                                            className={`flex size-9 items-center justify-center rounded-lg text-sm font-semibold transition ${
                                                 currentPage ===
                                                 page
                                                     ? "bg-primary text-primary-foreground shadow-sm"
@@ -578,7 +578,7 @@ export default function EventsPageClient({
                                             })()}
                                         </div>
 
-                                        <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                                        <span className="text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                                             Event details
                                         </span>
                                     </div>
@@ -589,7 +589,7 @@ export default function EventsPageClient({
                                         )}
                                     </h2>
 
-                                    <p className="mt-1 text-xs text-muted-foreground">
+                                    <p className="mt-1 text-sm text-muted-foreground">
                                         {
                                             selectedEvent.website_name
                                         }
@@ -611,21 +611,21 @@ export default function EventsPageClient({
 
                             <div className="space-y-5 p-6">
                                 <div>
-                                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                                    <p className="text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                                         Event ID
                                     </p>
 
-                                    <p className="mt-1.5 break-all rounded-lg bg-muted/50 p-2.5 font-mono text-[11px]">
+                                    <p className="mt-1.5 break-all rounded-lg bg-muted/50 p-2.5 font-mono text-[13px]">
                                         {selectedEvent.id}
                                     </p>
                                 </div>
 
                                 <div>
-                                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                                    <p className="text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                                         Received
                                     </p>
 
-                                    <p className="mt-1.5 text-xs">
+                                    <p className="mt-1.5 text-sm">
                                         {formatDate(
                                             selectedEvent.created_at
                                         )}
@@ -633,11 +633,11 @@ export default function EventsPageClient({
                                 </div>
 
                                 <div>
-                                    <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                                    <p className="mb-2 text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                                         Event data
                                     </p>
 
-                                    <pre className="max-h-80 overflow-auto rounded-xl border border-border/60 bg-muted/40 p-4 text-[11px] leading-5">
+                                    <pre className="max-h-80 overflow-auto rounded-xl border border-border/60 bg-muted/40 p-4 text-[13px] leading-5">
                                         {JSON.stringify(
                                             selectedEvent.data,
                                             null,

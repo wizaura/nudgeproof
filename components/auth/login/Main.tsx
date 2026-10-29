@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
+import { AuthShell } from "@/components/auth/auth-shell";
 
 export default function Login() {
   const router = useRouter();
@@ -38,84 +39,28 @@ export default function Login() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <div className="w-full max-w-md space-y-8">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            Welcome back
-          </h1>
-
-          <p className="text-muted-foreground">
-            Log in to your NudgeProof account.
-          </p>
-        </div>
-
-        <form onSubmit={handleLogin} className="space-y-5">
-          <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">
-              Email
-            </label>
-
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-              className="w-full rounded-md border px-3 py-2"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="password" className="text-sm font-medium">
-                Password
-              </label>
-
-              <Link
-                href="/forgot-password"
-                className="text-sm text-muted-foreground underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
-
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full rounded-md border px-3 py-2"
-            />
-          </div>
-
-          {error && (
-            <p className="text-sm text-destructive">
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-md bg-primary px-4 py-2 text-primary-foreground disabled:opacity-50"
-          >
-            {loading ? "Logging in..." : "Log in"}
-          </button>
-        </form>
-
-        <p className="text-center text-sm text-muted-foreground">
-          Don't have an account?{" "}
-          <Link
-            href="/signup"
-            className="font-medium text-foreground underline"
-          >
-            Create one
-          </Link>
+    <AuthShell
+      title="Welcome back"
+      description="Log in to your NudgeProof account and pick up where you left off."
+      footer={
+        <p className="text-center text-sm text-neutral-600">
+          Don’t have an account?{" "}
+          <Link href="/signup" className="font-semibold text-[#171717] underline decoration-[#a8cf25] decoration-2 underline-offset-4">Create one</Link>
         </p>
-      </div>
-    </main>
+      }
+    >
+      <form onSubmit={handleLogin} className="space-y-5">
+        <div className="space-y-2">
+          <label htmlFor="email" className="block text-sm font-semibold text-neutral-800">Email address</label>
+          <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" required className="h-12 w-full rounded-xl border border-black/10 bg-white px-4 text-base outline-none transition placeholder:text-neutral-400 focus:border-[#7fa83b] focus:ring-4 focus:ring-[#9bc85d]/15" />
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-3"><label htmlFor="password" className="text-sm font-semibold text-neutral-800">Password</label><a href="mailto:hello@nudgeproof.com?subject=Help%20with%20my%20password" className="text-sm font-medium text-neutral-500 underline underline-offset-4 hover:text-neutral-900">Forgot password?</a></div>
+          <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required className="h-12 w-full rounded-xl border border-black/10 bg-white px-4 text-base outline-none transition focus:border-[#7fa83b] focus:ring-4 focus:ring-[#9bc85d]/15" />
+        </div>
+        {error && <p role="alert" aria-live="polite" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">{error}</p>}
+        <button type="submit" disabled={loading} className="group flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#202b23] px-5 text-base font-semibold text-white transition hover:bg-[#394d3d] disabled:cursor-not-allowed disabled:opacity-60">{loading ? "Logging in…" : "Log in"}<span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span></button>
+      </form>
+    </AuthShell>
   );
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { subscriptionPlanToPlanSlug } from "@/lib/billing/plans";
 
 type Props = {
     params: Promise<{
@@ -158,7 +159,7 @@ export async function POST(
                     slug,
                     max_impressions
                 `)
-                .eq("slug", subscription.plan)
+                .eq("slug", subscriptionPlanToPlanSlug(subscription.plan) ?? "free")
                 .single();
 
             if (

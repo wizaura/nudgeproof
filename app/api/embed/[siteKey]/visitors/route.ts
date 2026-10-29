@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { redis } from "@/lib/redis/server";
+import { subscriptionPlanToPlanSlug } from "@/lib/billing/plans";
 
 type Props = {
     params: Promise<{
@@ -187,7 +188,7 @@ export async function GET(
                 )
                 .eq(
                     "slug",
-                    subscription.plan
+                    subscriptionPlanToPlanSlug(subscription.plan) ?? "free"
                 )
                 .single();
 

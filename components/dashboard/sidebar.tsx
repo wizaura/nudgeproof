@@ -116,7 +116,7 @@ export function Sidebar() {
               NudgeProof
             </div>
 
-            <div className="text-[10px] text-muted-foreground">
+            <div className="text-sm text-muted-foreground">
               Social proof, amplified.
             </div>
           </div>
@@ -203,7 +203,7 @@ export function Sidebar() {
                   NudgeProof
                 </div>
 
-                <div className="truncate text-[10px] text-white/40">
+                <div className="truncate text-sm text-white/40">
                   Social proof, amplified.
                 </div>
               </div>
@@ -229,7 +229,7 @@ export function Sidebar() {
             {navigation.map((group) => (
               <div key={group.section}>
                 {!collapsed && (
-                  <div className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/30">
+                  <div className="mb-2 px-3 text-sm font-semibold uppercase tracking-[0.12em] text-white/30">
                     {group.section}
                   </div>
                 )}
@@ -401,7 +401,7 @@ export function Sidebar() {
             `}
           >
             {!collapsed && (
-              <span className="text-xs">
+              <span className="text-sm">
                 Collapse
               </span>
             )}

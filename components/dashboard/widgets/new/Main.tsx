@@ -171,7 +171,7 @@ export default function NewWidget() {
                 {/* Back */}
                 <Link
                     href="/dashboard/widgets"
-                    className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
                     <ArrowLeft className="size-3.5" />
                     Back to widgets
@@ -183,12 +183,12 @@ export default function NewWidget() {
                         <div className="mb-2.5 flex items-center gap-2">
                             <span className="size-1.5 rounded-full bg-primary" />
 
-                            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                            <span className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                                 Widgets
                             </span>
                         </div>
 
-                        <h1 className="text-[28px] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[30px]">
+                        <h1 className="text-[32px] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[34px]">
                             Create widget
                         </h1>
 
@@ -203,10 +203,10 @@ export default function NewWidget() {
                         </div>
 
                         <div>
-                            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                            <p className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
                                 Setup
                             </p>
-                            <p className="text-xs font-semibold">
+                            <p className="text-sm font-semibold">
                                 Quick & simple
                             </p>
                         </div>
@@ -230,7 +230,7 @@ export default function NewWidget() {
                                         Basic information
                                     </h2>
 
-                                    <p className="mt-0.5 text-xs text-muted-foreground">
+                                    <p className="mt-0.5 text-sm text-muted-foreground">
                                         Choose where this widget will appear.
                                     </p>
                                 </div>
@@ -242,7 +242,7 @@ export default function NewWidget() {
                             <div className="space-y-2">
                                 <label
                                     htmlFor="website"
-                                    className="text-xs font-semibold"
+                                    className="text-sm font-semibold"
                                 >
                                     Website
                                 </label>
@@ -255,13 +255,13 @@ export default function NewWidget() {
                                             No websites found
                                         </p>
 
-                                        <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                                        <p className="mt-1 text-sm leading-5 text-muted-foreground">
                                             Add a website before creating a widget.
                                         </p>
 
                                         <Link
                                             href="/dashboard/websites/new"
-                                            className="mt-3 inline-flex text-xs font-semibold text-primary hover:underline"
+                                            className="mt-3 inline-flex text-sm font-semibold text-primary hover:underline"
                                         >
                                             Add website
                                         </Link>
@@ -294,7 +294,7 @@ export default function NewWidget() {
                             <div className="space-y-2">
                                 <label
                                     htmlFor="name"
-                                    className="text-xs font-semibold"
+                                    className="text-sm font-semibold"
                                 >
                                     Widget name
                                 </label>
@@ -312,7 +312,7 @@ export default function NewWidget() {
                                     className="h-11 w-full rounded-xl border border-border/70 bg-background px-3.5 text-sm outline-none transition placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/10 disabled:opacity-50"
                                 />
 
-                                <p className="text-[11px] leading-5 text-muted-foreground">
+                                <p className="text-[13px] leading-5 text-muted-foreground">
                                     Used only to identify the widget in your dashboard.
                                 </p>
                             </div>
@@ -332,7 +332,7 @@ export default function NewWidget() {
                                         Widget type
                                     </h2>
 
-                                    <p className="mt-0.5 text-xs text-muted-foreground">
+                                    <p className="mt-0.5 text-sm text-muted-foreground">
                                         Choose the type of social proof you want to display.
                                     </p>
                                 </div>
@@ -379,7 +379,7 @@ export default function NewWidget() {
                                             {widget.name}
                                         </h3>
 
-                                        <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                                        <p className="mt-1 text-sm leading-5 text-muted-foreground">
                                             {widget.description}
                                         </p>
                                     </button>
@@ -395,11 +395,11 @@ export default function NewWidget() {
                         </div>
 
                         <div>
-                            <p className="text-xs font-semibold">
+                            <p className="text-sm font-semibold">
                                 Ready to connect
                             </p>
 
-                            <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
+                            <p className="mt-1 text-[13px] leading-5 text-muted-foreground">
                                 After creating your widget, you can configure
                                 its appearance and install it on your website.
                             </p>
@@ -408,7 +408,7 @@ export default function NewWidget() {
 
                     {/* Error */}
                     {error && (
-                        <div className="rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-xs font-medium text-destructive">
+                        <div className="rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive">
                             {error}
                         </div>
                     )}

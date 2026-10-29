@@ -575,7 +575,7 @@ export default async function Widgets({ searchParams }: Props) {
                                                             }
                                                         </h2>
 
-                                                        <span className="rounded-full bg-muted px-2 py-0.5 text-[9px] font-medium text-muted-foreground">
+                                                        <span className="rounded-full bg-muted px-2 py-0.5 text-sm font-medium text-muted-foreground">
                                                             {
                                                                 websiteWidgets?.length
                                                             }{" "}
@@ -586,7 +586,7 @@ export default async function Widgets({ searchParams }: Props) {
                                                         </span>
                                                     </div>
 
-                                                    <p className="mt-0.5 truncate text-[10px] text-muted-foreground">
+                                                    <p className="mt-0.5 truncate text-sm text-muted-foreground">
                                                         {
                                                             website.url
                                                         }
@@ -603,7 +603,7 @@ export default async function Widgets({ searchParams }: Props) {
                                                     rounded-lg
                                                     px-2.5
                                                     py-1.5
-                                                    text-[10px]
+                                                    text-sm
                                                     font-medium
                                                     text-muted-foreground
                                                     transition
@@ -685,7 +685,7 @@ export default async function Widgets({ searchParams }: Props) {
                                                                                 }
                                                                             </h3>
 
-                                                                            <p className="mt-0.5 text-[10px] text-muted-foreground">
+                                                                            <p className="mt-0.5 text-sm text-muted-foreground">
                                                                                 {info?.label ??
                                                                                     widget.type}
                                                                             </p>
@@ -698,7 +698,7 @@ export default async function Widgets({ searchParams }: Props) {
                                                                             rounded-full
                                                                             px-2
                                                                             py-1
-                                                                            text-[9px]
+                                                                            text-sm
                                                                             font-medium
                                                                             ${
                                                                                 widget.status ===
@@ -730,11 +730,11 @@ export default async function Widgets({ searchParams }: Props) {
                                                                             py-2
                                                                         "
                                                                     >
-                                                                        <p className="text-[8px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                                                                        <p className="text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                                                                             Widget ID
                                                                         </p>
 
-                                                                        <p className="mt-0.5 truncate font-mono text-[9px] text-muted-foreground">
+                                                                        <p className="mt-0.5 truncate font-mono text-sm text-muted-foreground">
                                                                             {
                                                                                 widget.id
                                                                             }
@@ -773,13 +773,13 @@ export default async function Widgets({ searchParams }: Props) {
                                                                         </div>
 
                                                                         <div className="min-w-0 flex-1">
-                                                                            <p className="truncate text-[10px] font-medium">
+                                                                            <p className="truncate text-sm font-medium">
                                                                                 {
                                                                                     info?.label
                                                                                 }
                                                                             </p>
 
-                                                                            <p className="mt-0.5 truncate text-[8px] text-muted-foreground">
+                                                                            <p className="mt-0.5 truncate text-sm text-muted-foreground">
                                                                                 {
                                                                                     info?.description
                                                                                 }
@@ -806,7 +806,7 @@ export default async function Widgets({ searchParams }: Props) {
                                                                                 border-border/60
                                                                                 px-2.5
                                                                                 py-1.5
-                                                                                text-[9px]
+                                                                                text-sm
                                                                                 font-medium
                                                                                 text-muted-foreground
                                                                             "
@@ -825,7 +825,7 @@ export default async function Widgets({ searchParams }: Props) {
                                                                                 border-border/60
                                                                                 px-2.5
                                                                                 py-1.5
-                                                                                text-[9px]
+                                                                                text-sm
                                                                                 font-medium
                                                                                 text-muted-foreground
                                                                             "
@@ -869,7 +869,7 @@ export default async function Widgets({ searchParams }: Props) {
 
                     {totalPages > 1 && (
                         <div className="mt-8 flex flex-col gap-3 border-t border-border/60 pt-5 sm:flex-row sm:items-center sm:justify-between">
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-sm text-muted-foreground">
                                 Showing{" "}
                                 <span className="font-medium text-foreground">
                                     {from + 1}
@@ -966,7 +966,7 @@ export default async function Widgets({ searchParams }: Props) {
                                                     }
                                                 >
                                                     {showEllipsis && (
-                                                        <span className="flex size-9 items-center justify-center text-xs text-muted-foreground">
+                                                        <span className="flex size-9 items-center justify-center text-sm text-muted-foreground">
                                                             ...
                                                         </span>
                                                     )}
@@ -986,7 +986,7 @@ export default async function Widgets({ searchParams }: Props) {
                                                             justify-center
                                                             rounded-lg
                                                             border
-                                                            text-xs
+                                                            text-sm
                                                             font-medium
                                                             transition
                                                             ${
