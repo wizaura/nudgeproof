@@ -17,10 +17,6 @@ export function AuthShell({ title, description, footer, children }: AuthShellPro
           <div aria-hidden="true" className="absolute -right-12 -top-14 h-64 w-64 rounded-full bg-[#d7e9b5]" />
           <div aria-hidden="true" className="absolute bottom-20 right-12 rotate-12 text-6xl">✨</div>
           <div className="relative">
-            <Link href="/" className="inline-flex items-center gap-2.5" aria-label="NudgeProof home">
-              <img src="/nudgeproof-logo.svg" alt="" className="h-9 w-9" />
-              <span className="text-xl font-bold tracking-[-.05em]">NudgeProof</span>
-            </Link>
             <p className="mt-20 max-w-lg text-5xl font-medium leading-[1.02] tracking-[-.065em] xl:text-6xl">A little proof can go a long way.</p>
             <p className="mt-5 max-w-md text-lg leading-8 text-neutral-600">Give your visitors a clearer picture of the people already choosing you.</p>
           </div>
@@ -32,10 +28,6 @@ export function AuthShell({ title, description, footer, children }: AuthShellPro
         </aside>
 
         <section className="flex flex-col justify-center px-5 py-8 sm:px-10 sm:py-12 lg:px-12 xl:px-16">
-          <div className="mb-12 flex items-center justify-between lg:hidden">
-            <Link href="/" className="inline-flex items-center gap-2.5" aria-label="NudgeProof home"><img src="/nudgeproof-logo.svg" alt="" className="h-8 w-8" /><span className="text-lg font-bold tracking-[-.05em]">NudgeProof</span></Link>
-            <Link href="/" className="text-sm font-medium text-neutral-500 hover:text-black">Home</Link>
-          </div>
           <div className="mx-auto w-full max-w-md">
             <p className="text-sm font-semibold text-blue-700">NudgeProof account</p>
             <h1 className="mt-3 text-4xl font-medium tracking-[-.06em] text-[#171717] sm:text-5xl">{title}</h1>

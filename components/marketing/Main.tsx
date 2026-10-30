@@ -1,4 +1,4 @@
-import { SiteFooter, SiteHeader } from "@/components/marketing/site-header";
+import { SiteFooter, SiteHeader } from "@/components/marketing/SiteLayout";
 import { HeroSection } from "@/components/marketing/hero-section";
 import { FaqSection, FinalCtaSection, OrganizationSchema, PricingSection, UseCasesSection } from "@/components/marketing/sections";
 import { NotificationShowcase } from "./NotificationSection";
@@ -14,7 +14,6 @@ export default async function MarketingMain() {
   return (
     <main className="min-h-screen overflow-hidden bg-white text-[#171717]">
       <OrganizationSchema />
-      <SiteHeader isLoggedIn={isLoggedIn} />
       <HeroSection isLoggedIn={isLoggedIn} />
       <NotificationShowcase />
       <ProductSection isLoggedIn={isLoggedIn} />
@@ -23,7 +22,6 @@ export default async function MarketingMain() {
       <PricingSection />
       <FaqSection />
       <FinalCtaSection isLoggedIn={isLoggedIn} />
-      <SiteFooter isLoggedIn={isLoggedIn} />
     </main>
   );
 }
