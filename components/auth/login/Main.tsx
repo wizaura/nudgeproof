@@ -59,7 +59,6 @@ export default function Login() {
     >
       <div className="mb-5 space-y-5">
         <GoogleAuthButton
-          flow="login"
           disabled={loading || googleLoading}
           onError={setError}
           onStart={() => setGoogleLoading(true)}

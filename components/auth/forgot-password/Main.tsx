@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { AuthShell } from "@/components/auth/auth-shell";
@@ -10,6 +10,12 @@ export default function ForgotPassword() {
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("error") === "recovery_link") {
+      setError("That reset link is invalid or expired. Request a new one below.");
+    }
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -21,9 +27,7 @@ export default function ForgotPassword() {
       const appOrigin = isLocalDevelopment
         ? window.location.origin
         : process.env.NEXT_PUBLIC_APP_URL || "https://nudgeproof.com";
-      const recoveryUrl = new URL("/auth/callback", appOrigin);
-      recoveryUrl.searchParams.set("next", "/reset-password");
-      recoveryUrl.searchParams.set("flow", "recovery");
+      const recoveryUrl = new URL("/auth/recovery/callback", appOrigin);
 
       const { error: requestError } = await createClient().auth.resetPasswordForEmail(email, {
         redirectTo: recoveryUrl.toString(),

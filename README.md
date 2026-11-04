@@ -40,13 +40,13 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 Google sign-in uses Supabase Auth's OAuth flow and returns through `/auth/callback`.
 
 1. In Supabase, enable Google under **Authentication → Sign In / Providers** and add the Google OAuth client ID and secret.
-2. In Supabase **Authentication → URL Configuration**, allow the app callback URLs, such as `http://localhost:3000/auth/callback` and `https://your-domain.com/auth/callback`.
+2. Set the Supabase **Site URL** to the production app origin and allow `http://localhost:3000/auth/callback` plus `https://your-domain.com/auth/callback` in **Authentication → URL Configuration**.
 3. In Google Cloud's OAuth client, add your app origins (for example `http://localhost:3000` and `https://your-domain.com`). Set the authorized redirect URI to the Supabase callback URL shown on the Google provider settings page.
 
 Supabase redirects back to the app callback, which exchanges the OAuth code for the same cookie-backed session used by email/password authentication.
 
 ## Password recovery setup
 
-Password reset uses Supabase Auth email recovery links through `/auth/callback` and `/reset-password`. In Supabase **Authentication → URL Configuration**, allow both `http://localhost:3000/auth/callback` and `https://your-domain.com/auth/callback`.
+Password reset uses `/auth/recovery/callback` to exchange the recovery code, then opens `/reset-password`. Add `http://localhost:3000/auth/recovery/callback` and `https://your-domain.com/auth/recovery/callback` to the Supabase redirect allow list. If the recovery email template is customized, its link should use `{{ .ConfirmationURL }}` so Supabase verifies the token and honors the requested callback.
 
 Supabase controls recovery-link expiry through **Authentication → Sign In / Providers → Email → Email OTP Expiration**. Set this to `3600` seconds (one hour). This shared setting also controls expiry for other Supabase email links and OTPs.

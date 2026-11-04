@@ -5,14 +5,13 @@ import { LoaderCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 type GoogleAuthButtonProps = {
-  flow: "login" | "signup";
   disabled?: boolean;
   onError: (message: string) => void;
   onStart: () => void;
   onFinish: () => void;
 };
 
-export function GoogleAuthButton({ flow, disabled, onError, onStart, onFinish }: GoogleAuthButtonProps) {
+export function GoogleAuthButton({ disabled, onError, onStart, onFinish }: GoogleAuthButtonProps) {
   const [loading, setLoading] = useState(false);
 
   async function signInWithGoogle() {
@@ -27,8 +26,6 @@ export function GoogleAuthButton({ flow, disabled, onError, onStart, onFinish }:
         ? window.location.origin
         : process.env.NEXT_PUBLIC_APP_URL || "https://nudgeproof.com";
       const callbackUrl = new URL("/auth/callback", appOrigin);
-      callbackUrl.searchParams.set("next", "/dashboard");
-      callbackUrl.searchParams.set("flow", flow);
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",

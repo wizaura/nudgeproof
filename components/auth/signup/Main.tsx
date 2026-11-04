@@ -71,7 +71,6 @@ export default function Signup() {
     >
       <div className="mb-5 space-y-5">
         <GoogleAuthButton
-          flow="signup"
           disabled={loading || googleLoading}
           onError={setError}
           onStart={() => setGoogleLoading(true)}
