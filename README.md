@@ -34,3 +34,13 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Google sign-in setup
+
+Google sign-in uses Supabase Auth's OAuth flow and returns through `/auth/callback`.
+
+1. In Supabase, enable Google under **Authentication → Sign In / Providers** and add the Google OAuth client ID and secret.
+2. In Supabase **Authentication → URL Configuration**, allow the app callback URLs, such as `http://localhost:3000/auth/callback` and `https://your-domain.com/auth/callback`.
+3. In Google Cloud's OAuth client, add your app origins (for example `http://localhost:3000` and `https://your-domain.com`). Set the authorized redirect URI to the Supabase callback URL shown on the Google provider settings page.
+
+Supabase redirects back to the app callback, which exchanges the OAuth code for the same cookie-backed session used by email/password authentication.

@@ -29,10 +29,7 @@ export function SiteHeader({ isLoggedIn }: AuthAwareProps) {
           className="flex items-center gap-2.5"
           aria-label="NudgeProof home"
         >
-          <img src="/nudgeproof-logo.svg" alt="" className="h-9 w-9" />
-          <span className="text-xl font-bold tracking-[-0.05em]">
-            NudgeProof
-          </span>
+          <img src="/logo-11.png" alt="" className="h-18 w-32" />
         </Link>
 
         {/* Desktop navigation */}
@@ -143,10 +140,7 @@ export function SiteFooter({ isLoggedIn }: AuthAwareProps) {
           className="flex items-center gap-2.5"
           aria-label="NudgeProof home"
         >
-          <img src="/nudgeproof-logo.svg" alt="" className="h-8 w-8" />
-          <span className="text-lg font-bold tracking-[-0.05em]">
-            NudgeProof
-          </span>
+          <img src="/logo-11.png" alt="" className="h-18 w-32" />
         </Link>
 
         <p className="max-w-md text-sm leading-6 text-neutral-600">

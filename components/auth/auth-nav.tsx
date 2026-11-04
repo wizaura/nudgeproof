@@ -13,10 +13,9 @@ export function AuthNav() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-white/90 backdrop-blur-xl">
-      <nav aria-label="Account navigation" className="mx-auto flex h-[68px] max-w-7xl items-center justify-between px-5 sm:px-8">
+      <nav aria-label="Account navigation" className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8">
         <Link href="/" className="inline-flex items-center gap-2.5" aria-label="NudgeProof home">
-          <img src="/nudgeproof-logo.svg" alt="" className="h-8 w-8" />
-          <span className="text-lg font-bold tracking-[-.05em] text-[#171717]">NudgeProof</span>
+          <img src="/logo-11.png" alt="" className="h-18 w-32" />
         </Link>
 
         <div className="flex items-center gap-2 sm:gap-3">

@@ -1,11 +1,12 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/client";
 import { AuthShell } from "@/components/auth/auth-shell";
+import { GoogleAuthButton } from "@/components/auth/google-auth-button";
 
 export default function Login() {
   const router = useRouter();
@@ -16,6 +17,13 @@ export default function Login() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("error") === "google_auth") {
+      setError("Google sign-in could not be completed. Please try again or use your email and password.");
+    }
+  }, []);
 
   async function handleLogin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,6 +57,20 @@ export default function Login() {
         </p>
       }
     >
+      <div className="mb-5 space-y-5">
+        <GoogleAuthButton
+          flow="login"
+          disabled={loading || googleLoading}
+          onError={setError}
+          onStart={() => setGoogleLoading(true)}
+          onFinish={() => setGoogleLoading(false)}
+        />
+        <div className="flex items-center gap-4" aria-hidden="true">
+          <span className="h-px flex-1 bg-black/[.08]" />
+          <span className="text-xs font-medium uppercase tracking-[.14em] text-neutral-400">or with email</span>
+          <span className="h-px flex-1 bg-black/[.08]" />
+        </div>
+      </div>
       <form onSubmit={handleLogin} className="space-y-5">
         <div className="space-y-2">
           <label htmlFor="email" className="block text-sm font-semibold text-neutral-800">Email address</label>
@@ -59,7 +81,7 @@ export default function Login() {
           <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required className="h-12 w-full rounded-xl border border-black/10 bg-white px-4 text-base outline-none transition focus:border-[#7fa83b] focus:ring-4 focus:ring-[#9bc85d]/15" />
         </div>
         {error && <p role="alert" aria-live="polite" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">{error}</p>}
-        <button type="submit" disabled={loading} className="group flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#202b23] px-5 text-base font-semibold text-white transition hover:bg-[#394d3d] disabled:cursor-not-allowed disabled:opacity-60">{loading ? "Logging in…" : "Log in"}<span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span></button>
+        <button type="submit" disabled={loading || googleLoading} className="group flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#202b23] px-5 text-base font-semibold text-white transition hover:bg-[#394d3d] disabled:cursor-not-allowed disabled:opacity-60">{loading ? "Logging in…" : "Log in"}<span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span></button>
       </form>
     </AuthShell>
   );

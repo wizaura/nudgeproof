@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useSidebar } from "@/app/dashboard/sidebar-context";
+import Image from "next/image";
 
 const navigation = [
   {
@@ -107,19 +108,15 @@ export function Sidebar() {
           href="/dashboard"
           className="flex items-center gap-2.5"
         >
-          <div className="flex size-9 items-center justify-center rounded-xl bg-[var(--brand-blue)] text-white shadow-[0_4px_14px_rgba(0,127,255,0.18)]">
-            <Sparkles className="size-4" />
-          </div>
+          <Image
+            src="/logo-11.png"
+            alt="NudgeProof"
+            width={36}
+            height={36}
+            priority
+            className="h-12 w-32 rounded-xl object-contain"
+          />
 
-          <div>
-            <div className="text-sm font-semibold tracking-tight text-[var(--brand-black)]">
-              NudgeProof
-            </div>
-
-            <div className="text-sm text-muted-foreground">
-              Social proof, amplified.
-            </div>
-          </div>
         </Link>
 
         {/* Menu */}
@@ -184,6 +181,7 @@ export function Sidebar() {
             }
           `}
         >
+
           <Link
             href="/dashboard"
             className="flex min-w-0 items-center gap-3"
@@ -193,21 +191,14 @@ export function Sidebar() {
               }
             }}
           >
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[var(--brand-blue)] text-white shadow-[0_0_20px_rgba(0,127,255,0.2)]">
-              <Sparkles className="size-4" />
-            </div>
-
-            {!collapsed && (
-              <div className="min-w-0">
-                <div className="truncate text-sm font-semibold tracking-tight">
-                  NudgeProof
-                </div>
-
-                <div className="truncate text-sm text-white/40">
-                  Social proof, amplified.
-                </div>
-              </div>
-            )}
+            <Image
+              src="/logo-11.png"
+              alt="NudgeProof"
+              width={36}
+              height={36}
+              priority
+              className="h-12 w-32 shrink-0 rounded-xl object-contain"
+            />
           </Link>
 
           {/* Mobile close */}
