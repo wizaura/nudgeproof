@@ -77,7 +77,7 @@ export default function Login() {
           <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" required className="h-12 w-full rounded-xl border border-black/10 bg-white px-4 text-base outline-none transition placeholder:text-neutral-400 focus:border-[#7fa83b] focus:ring-4 focus:ring-[#9bc85d]/15" />
         </div>
         <div className="space-y-2">
-          <div className="flex items-center justify-between gap-3"><label htmlFor="password" className="text-sm font-semibold text-neutral-800">Password</label><a href="mailto:hello@nudgeproof.com?subject=Help%20with%20my%20password" className="text-sm font-medium text-neutral-500 underline underline-offset-4 hover:text-neutral-900">Forgot password?</a></div>
+          <div className="flex items-center justify-between gap-3"><label htmlFor="password" className="text-sm font-semibold text-neutral-800">Password</label><Link href="/forgot-password" className="text-sm font-medium text-neutral-500 underline underline-offset-4 hover:text-neutral-900">Forgot password?</Link></div>
           <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required className="h-12 w-full rounded-xl border border-black/10 bg-white px-4 text-base outline-none transition focus:border-[#7fa83b] focus:ring-4 focus:ring-[#9bc85d]/15" />
         </div>
         {error && <p role="alert" aria-live="polite" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">{error}</p>}
