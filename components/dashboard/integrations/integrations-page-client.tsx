@@ -11,8 +11,10 @@ import {
     Sparkles,
     Webhook,
     Check,
+    LoaderCircle,
+    X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 
 type Website = {
     id: string;
@@ -45,6 +47,14 @@ export default function IntegrationsPageClient({
 
     const [copied, setCopied] =
         useState<string | null>(null);
+    const [activeProvider, setActiveProvider] = useState<"wordpress" | "shopify" | "woocommerce" | null>(null);
+    const [connecting, setConnecting] = useState(false);
+    const [connectionError, setConnectionError] = useState("");
+    const [connectionSuccess, setConnectionSuccess] = useState("");
+    const [storeUrl, setStoreUrl] = useState("");
+    const [adminToken, setAdminToken] = useState("");
+    const [consumerKey, setConsumerKey] = useState("");
+    const [consumerSecret, setConsumerSecret] = useState("");
 
     const selectedWebsite = websites.find(
         (website) =>
@@ -82,6 +92,45 @@ export default function IntegrationsPageClient({
       "product": "{{PRODUCT_NAME}}"
     }
   }'`;
+
+    function openProvider(provider: "wordpress" | "shopify" | "woocommerce") {
+        setActiveProvider(provider);
+        setConnectionError("");
+        setConnectionSuccess("");
+    }
+
+    async function connectProvider(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        if (!selectedWebsite) {
+            setConnectionError("Add and select a website before connecting a store.");
+            return;
+        }
+        setConnecting(true);
+        setConnectionError("");
+        setConnectionSuccess("");
+        try {
+            const response = await fetch("/api/integrations/connect", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    provider: activeProvider,
+                    websiteId: selectedWebsite.id,
+                    storeUrl,
+                    ...(activeProvider === "shopify" ? { accessToken: adminToken } : { consumerKey, consumerSecret }),
+                }),
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || "Could not connect store.");
+            setConnectionSuccess(result.message || "Store connected.");
+            setAdminToken("");
+            setConsumerKey("");
+            setConsumerSecret("");
+        } catch (error) {
+            setConnectionError(error instanceof Error ? error.message : "Could not connect store.");
+        } finally {
+            setConnecting(false);
+        }
+    }
 
     return (
         <div className="min-h-screen">
@@ -167,10 +216,22 @@ export default function IntegrationsPageClient({
 
                     <IntegrationCard
                         icon={
+                            <Globe className="size-4.5" />
+                        }
+                        title="WordPress"
+                        description="Connect your WordPress site and send activity to NudgeProof with a plugin."
+                        available
+                        onClick={() => openProvider("wordpress")}
+                    />
+
+                    <IntegrationCard
+                        icon={
                             <ShoppingBag className="size-4.5" />
                         }
                         title="Shopify"
-                        description="Automatically turn new Shopify orders into NudgeProof purchase events."
+                        description="Automatically turn paid Shopify orders into NudgeProof purchase events."
+                        available
+                        onClick={() => openProvider("shopify")}
                     />
 
                     <IntegrationCard
@@ -187,8 +248,69 @@ export default function IntegrationsPageClient({
                         }
                         title="WooCommerce"
                         description="Connect your WooCommerce store and display real purchase activity."
+                        available
+                        onClick={() => openProvider("woocommerce")}
                     />
                 </div>
+
+                {activeProvider && (
+                    <section className="scroll-mt-6 rounded-2xl border border-border/60 bg-background/90 shadow-sm" aria-labelledby="provider-setup-title">
+                        <div className="flex items-start justify-between gap-4 border-b border-border/60 px-6 py-5">
+                            <div>
+                                <h2 id="provider-setup-title" className="text-lg font-semibold">Connect {activeProvider === "woocommerce" ? "WooCommerce" : activeProvider[0].toUpperCase() + activeProvider.slice(1)}</h2>
+                                <p className="mt-1 text-sm text-muted-foreground">Events will be added to <span className="font-medium text-foreground">{selectedWebsite?.name || "your selected website"}</span>.</p>
+                            </div>
+                            <button type="button" onClick={() => setActiveProvider(null)} aria-label="Close setup" className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground"><X className="size-4" /></button>
+                        </div>
+
+                        {activeProvider === "wordpress" ? (
+                            <div className="space-y-5 p-6">
+                                <ol className="list-decimal space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
+                                    <li>Download and install the NudgeProof plugin on your WordPress site.</li>
+                                    <li>In WordPress, open <span className="font-medium text-foreground">Settings → NudgeProof</span>.</li>
+                                    <li>Paste the webhook URL and secret below, then save. New WordPress user registrations will be sent automatically.</li>
+                                </ol>
+                                {!selectedWebsite ? (
+                                    <p className="rounded-xl bg-amber-500/10 p-4 text-sm text-amber-800">Add a website first to get its webhook credentials.</p>
+                                ) : (
+                                    <div className="grid gap-3 sm:grid-cols-2">
+                                        <Credential value={webhookUrl} label="Webhook URL" onCopy={() => handleCopy(webhookUrl, "wordpress-url")} copied={copied === "wordpress-url"} />
+                                        <Credential value={selectedWebsite.webhook_secret || "Secret unavailable"} label="Webhook secret" onCopy={() => { if (selectedWebsite.webhook_secret) void handleCopy(selectedWebsite.webhook_secret, "wordpress-secret"); }} copied={copied === "wordpress-secret"} />
+                                    </div>
+                                )}
+                                <a href="/nudgeproof-wordpress.zip" download className="inline-flex h-10 items-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground hover:opacity-90">Download WordPress plugin</a>
+                                <p className="text-xs text-muted-foreground">Install it from Plugins → Add Plugin → Upload Plugin, then activate it.</p>
+                            </div>
+                        ) : (
+                            <form onSubmit={connectProvider} className="space-y-5 p-6">
+                                <label className="block space-y-2 text-sm font-medium">NudgeProof website
+                                    <select value={selectedWebsiteId} onChange={(event) => setSelectedWebsiteId(event.target.value)} className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm font-normal outline-none focus:border-primary">
+                                        {websites.length === 0 && <option value="">No websites available</option>}
+                                        {websites.map((website) => <option key={website.id} value={website.id}>{website.name}</option>)}
+                                    </select>
+                                </label>
+                                <label className="block space-y-2 text-sm font-medium">Store URL
+                                    <input required type="url" value={storeUrl} onChange={(event) => setStoreUrl(event.target.value)} placeholder={activeProvider === "shopify" ? "your-store.myshopify.com" : "https://yourstore.com"} className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm font-normal outline-none focus:border-primary" />
+                                </label>
+                                {activeProvider === "shopify" ? (
+                                    <label className="block space-y-2 text-sm font-medium">Shopify Admin API access token
+                                        <input required type="password" value={adminToken} onChange={(event) => setAdminToken(event.target.value)} autoComplete="off" placeholder="shpat_…" className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm font-normal outline-none focus:border-primary" />
+                                        <span className="block text-xs font-normal leading-5 text-muted-foreground">Create a Shopify custom app with orders read access and webhooks write access. The token is used only to register the paid order webhook and is not saved.</span>
+                                    </label>
+                                ) : (
+                                    <div className="grid gap-4 sm:grid-cols-2">
+                                        <label className="block space-y-2 text-sm font-medium">WooCommerce consumer key<input required type="password" value={consumerKey} onChange={(event) => setConsumerKey(event.target.value)} autoComplete="off" className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm font-normal outline-none focus:border-primary" /></label>
+                                        <label className="block space-y-2 text-sm font-medium">WooCommerce consumer secret<input required type="password" value={consumerSecret} onChange={(event) => setConsumerSecret(event.target.value)} autoComplete="off" className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm font-normal outline-none focus:border-primary" /></label>
+                                        <p className="sm:col-span-2 text-xs leading-5 text-muted-foreground">Create REST API credentials in WooCommerce → Settings → Advanced → REST API with Read/Write access. Credentials are used to register the webhook and are not saved.</p>
+                                    </div>
+                                )}
+                                {connectionError && <p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">{connectionError}</p>}
+                                {connectionSuccess && <p role="status" className="rounded-xl bg-green-500/10 p-3 text-sm text-green-700">{connectionSuccess}</p>}
+                                <button type="submit" disabled={connecting || !selectedWebsite} className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50">{connecting && <LoaderCircle className="size-4 animate-spin" />}{connecting ? "Connecting…" : "Connect store"}</button>
+                            </form>
+                        )}
+                    </section>
+                )}
 
                 {/* Custom webhook */}
                 <section
@@ -510,10 +632,14 @@ function IntegrationCard({
     icon,
     title,
     description,
+    available = false,
+    onClick,
 }: {
     icon: React.ReactNode;
     title: string;
     description: string;
+    available?: boolean;
+    onClick?: () => void;
 }) {
     return (
         <div className="rounded-2xl border border-border/60 bg-background/80 shadow-sm backdrop-blur-sm">
@@ -523,8 +649,8 @@ function IntegrationCard({
                         {icon}
                     </div>
 
-                    <span className="rounded-full border border-border/60 px-2.5 py-1 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                        Coming soon
+                    <span className={`rounded-full px-2.5 py-1 text-sm font-semibold uppercase tracking-wide ${available ? "bg-primary/10 text-primary" : "border border-border/60 text-muted-foreground"}`}>
+                        {available ? "Available" : "Coming soon"}
                     </span>
                 </div>
 
@@ -538,13 +664,25 @@ function IntegrationCard({
                     </p>
                 </div>
 
-                <button
-                    type="button"
-                    disabled
-                    className="mt-5 inline-flex h-9 items-center justify-center rounded-xl border border-border/70 px-3.5 text-sm font-semibold opacity-50"
-                >
-                    Connect
-                </button>
+                {available ? (
+                    <button type="button" onClick={onClick} className="mt-5 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90">
+                        Configure <ExternalLink className="size-3.5" />
+                    </button>
+                ) : (
+                    <button type="button" disabled className="mt-5 inline-flex h-10 items-center justify-center rounded-xl border border-border/70 px-4 text-sm font-semibold opacity-50">Connect</button>
+                )}
+            </div>
+        </div>
+    );
+}
+
+function Credential({ value, label, onCopy, copied }: { value: string; label: string; onCopy: () => void | Promise<void>; copied: boolean }) {
+    return (
+        <div className="min-w-0 rounded-xl border border-border/70 bg-muted/20 p-3">
+            <p className="mb-2 text-xs font-semibold text-muted-foreground">{label}</p>
+            <div className="flex items-center gap-2">
+                <code className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap text-xs">{value}</code>
+                <button type="button" onClick={onCopy} className="shrink-0 rounded-lg border border-border/70 px-2.5 py-1.5 text-xs font-medium hover:bg-muted">{copied ? "Copied" : "Copy"}</button>
             </div>
         </div>
     );
